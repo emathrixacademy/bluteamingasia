@@ -1,0 +1,106 @@
+/* BlueteamingAsia - Custom Styles */
+
+/* Severity color utilities */
+.severity-info { color: #6b7280; }
+.severity-low { color: #3b82f6; }
+.severity-medium { color: #f59e0b; }
+.severity-high { color: #ef4444; }
+.severity-critical { color: #dc2626; }
+
+/* Flash message animation */
+.flash-message {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Terminal cursor blink */
+#cmd-input {
+    caret-color: #4ade80;
+}
+
+/* Terminal scrollbar */
+#terminal::-webkit-scrollbar {
+    width: 6px;
+}
+
+#terminal::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+#terminal::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 3px;
+}
+
+#terminal::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Pipeline stage hover effect */
+.pipeline-stage:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+
+/* Status pulse animation */
+@keyframes pulse-green {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.status-pulse {
+    animation: pulse-green 2s ease-in-out infinite;
+}
+
+/* Table row highlight for unacknowledged alerts */
+tr.alert-pending {
+    background-color: rgba(254, 226, 226, 0.3);
+}
+
+/* Responsive table scroll indicator */
+.overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom focus styles */
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Dark sidebar for authenticated pages */
+.sidebar-dark {
+    background-color: #0f172a;
+}
+
+/* Chart container responsive */
+canvas {
+    max-width: 100%;
+}
+
+/* Timeline connector line */
+.timeline-line {
+    position: absolute;
+    left: 1rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e5e7eb;
+}
+
+/* JSON viewer styling */
+pre {
+    tab-size: 2;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

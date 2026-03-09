@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% block title %}BlueteamingAsia - AI Cyber-Physical Security Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative bg-brand-900 overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 25% 25%, #3b82f6 0%, transparent 50%), radial-gradient(circle at 75% 75%, #2563eb 0%, transparent 50%);"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight">
+                Unified AI-Driven<br>
+                <span class="text-blue-400">Cyber-Physical Security</span>
+            </h1>
+            <p class="mt-6 text-xl text-gray-300 max-w-3xl mx-auto">
+                One autonomous intelligence layer that unifies cybersecurity monitoring, physical access control,
+                video surveillance, and safety systems. Detect threats across domains. Respond in seconds.
+            </p>
+            <div class="mt-10 flex justify-center space-x-4">
+                <a href="{{ url_for('auth.register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition">Start Free</a>
+                <a href="{{ url_for('main.contact') }}" class="border border-gray-400 text-gray-300 hover:text-white hover:border-white px-8 py-3 rounded-lg text-lg font-semibold transition">Request Demo</a>
+            </div>
+        </div>
+    </div>
+    <!-- Animated grid lines -->
+    <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
+</section>
+
+<!-- 7 Domain Feature Cards -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900">Seven Security Domains. One Platform.</h2>
+            <p class="mt-4 text-lg text-gray-600">Every dimension of your organization's security, unified under a single AI intelligence layer.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Cybersecurity Monitoring -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Cybersecurity Monitoring</h3>
+                <p class="mt-2 text-gray-600">Network anomaly detection, log correlation, threat intelligence integration, and real-time endpoint monitoring.</p>
+            </div>
+            <!-- AI Video Surveillance -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">AI Video Surveillance</h3>
+                <p class="mt-2 text-gray-600">YOLO-powered object detection, behavior analysis, restricted zone monitoring, and automated tracking.</p>
+            </div>
+            <!-- Access Control -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Access Control</h3>
+                <p class="mt-2 text-gray-600">Badge readers, biometric systems, door controllers unified with digital identity management.</p>
+            </div>
+            <!-- Safety Monitoring -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Safety Monitoring</h3>
+                <p class="mt-2 text-gray-600">Fire, gas, temperature, and environmental sensors with automated emergency response protocols.</p>
+            </div>
+            <!-- Incident Investigation -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Incident Investigation</h3>
+                <p class="mt-2 text-gray-600">Timeline reconstruction, forensic evidence collection, and AI-powered analysis narratives.</p>
+            </div>
+            <!-- Autonomous AI Operations -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Autonomous AI Operations</h3>
+                <p class="mt-2 text-gray-600">Automated threat response, tool orchestration, and intelligent decision-making without human delay.</p>
+            </div>
+            <!-- Voice Interaction (centered) -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition md:col-start-2 lg:col-start-auto">
+                <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Voice Interaction</h3>
+                <p class="mt-2 text-gray-600">Speech-to-text command interface and conversational AI for hands-free security operations.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 9-Stage Pipeline Visual -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900">9-Stage Threat Detection Pipeline</h2>
+            <p class="mt-4 text-lg text-gray-600">Every signal processed through a battle-tested intelligence pipeline.</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4">
+            {% set stages = [
+                ('1', 'Data Sources', 'Devices, cameras, sensors, logs', 'blue'),
+                ('2', 'Ingestion', 'Collect and buffer raw events', 'indigo'),
+                ('3', 'Normalization', 'Standard security event schema', 'purple'),
+                ('4', 'Feature Extraction', 'Analytical features for AI', 'violet'),
+                ('5', 'Detection Engines', 'Rule-based + AI + Vision', 'red'),
+                ('6', 'Correlation', 'Cross-domain threat linking', 'orange'),
+                ('7', 'Classification', 'Risk level assignment', 'yellow'),
+                ('8', 'Response', 'Automated countermeasures', 'green'),
+                ('9', 'Incident Mgmt', 'Timeline, evidence, reports', 'teal')
+            ] %}
+            {% for num, name, desc, color in stages %}
+            <div class="flex items-center">
+                <div class="bg-{{ color }}-50 border-2 border-{{ color }}-200 rounded-lg p-4 w-36 text-center hover:shadow-md transition">
+                    <div class="text-2xl font-bold text-{{ color }}-600">{{ num }}</div>
+                    <div class="text-sm font-semibold text-gray-900 mt-1">{{ name }}</div>
+                    <div class="text-xs text-gray-500 mt-1">{{ desc }}</div>
+                </div>
+                {% if not loop.last %}
+                <svg class="w-6 h-6 text-gray-400 mx-1 flex-shrink-0 hidden lg:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900">How It Works</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-white">1</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Connect Devices</h3>
+                <p class="text-gray-600">Register your cameras, sensors, servers, access systems, and network infrastructure.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-white">2</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">AI Detects Threats</h3>
+                <p class="text-gray-600">The pipeline ingests, normalizes, and correlates events across all domains to surface real threats.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-white">3</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Respond Automatically</h3>
+                <p class="text-gray-600">Lock doors, block IPs, isolate servers, alert teams -- all executed autonomously in seconds.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Preview -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900">Plans & Pricing</h2>
+            <p class="mt-4 text-lg text-gray-600">Scale from a single site to a global security operation.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Free -->
+            <div class="bg-white rounded-xl border-2 border-gray-200 p-8">
+                <h3 class="text-lg font-semibold text-gray-900">Free</h3>
+                <p class="mt-2 text-gray-500">Get started with basic monitoring</p>
+                <p class="mt-4 text-4xl font-bold text-gray-900">$0<span class="text-lg text-gray-500">/mo</span></p>
+                <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>5 Cameras</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>10 Devices</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>1,000 Events/day</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Basic AI Investigations</li>
+                </ul>
+                <a href="{{ url_for('auth.register') }}" class="mt-8 block text-center bg-gray-100 hover:bg-gray-200 text-gray-900 py-2 rounded-lg font-medium transition">Get Started</a>
+            </div>
+            <!-- Professional -->
+            <div class="bg-white rounded-xl border-2 border-blue-500 p-8 relative shadow-lg">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</div>
+                <h3 class="text-lg font-semibold text-gray-900">Professional</h3>
+                <p class="mt-2 text-gray-500">Full autonomous security</p>
+                <p class="mt-4 text-4xl font-bold text-gray-900">$499<span class="text-lg text-gray-500">/mo</span></p>
+                <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Unlimited Cameras</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Unlimited Devices</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Full Autonomous AI</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Advanced Analytics</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>API Integrations</li>
+                </ul>
+                <a href="{{ url_for('main.contact') }}" class="mt-8 block text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition">Contact Sales</a>
+            </div>
+            <!-- Enterprise -->
+            <div class="bg-white rounded-xl border-2 border-gray-200 p-8">
+                <h3 class="text-lg font-semibold text-gray-900">Enterprise</h3>
+                <p class="mt-2 text-gray-500">Full platform with robotics</p>
+                <p class="mt-4 text-4xl font-bold text-gray-900">Custom</p>
+                <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Everything in Professional</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Robotics & Drones</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Predictive Security AI</li>
+                    <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>Private Deployment</li>
+                </ul>
+                <a href="{{ url_for('main.contact') }}" class="mt-8 block text-center bg-gray-100 hover:bg-gray-200 text-gray-900 py-2 rounded-lg font-medium transition">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 bg-brand-900">
+    <div class="max-w-4xl mx-auto text-center px-4">
+        <h2 class="text-3xl font-bold text-white">Ready to secure your organization?</h2>
+        <p class="mt-4 text-lg text-gray-300">Start with our free tier or schedule a demo with our security experts.</p>
+        <div class="mt-8 flex justify-center space-x-4">
+            <a href="{{ url_for('auth.register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition">Start Free</a>
+            <a href="{{ url_for('main.contact') }}" class="border border-gray-400 text-gray-300 hover:text-white hover:border-white px-8 py-3 rounded-lg text-lg font-semibold transition">Schedule Demo</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

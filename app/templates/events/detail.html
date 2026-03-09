@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Event {{ event.event_type }}{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <a href="{{ url_for('events.list_events') }}" class="text-sm text-blue-600 hover:underline">&larr; Back to Events</a>
+    </div>
+
+    <!-- Event Info -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ event.event_type }}</h1>
+                <p class="text-sm text-gray-500 mt-1 font-mono">{{ event.id }}</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                {% if event.severity == 'critical' %}bg-red-100 text-red-800
+                {% elif event.severity == 'high' %}bg-orange-100 text-orange-800
+                {% elif event.severity == 'medium' %}bg-yellow-100 text-yellow-800
+                {% elif event.severity == 'low' %}bg-blue-100 text-blue-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ event.severity }}
+            </span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Device</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">
+                    {% if event.device %}
+                    <a href="{{ url_for('devices.detail', device_id=event.device.id) }}" class="text-blue-600 hover:underline">{{ event.device.name }}</a>
+                    {% else %}Unknown{% endif %}
+                </p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Location</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ event.location or 'Not specified' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Timestamp</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ event.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Has Embedding</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ 'Yes' if event.embedding is not none else 'No' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Raw Data -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Raw Data</h3>
+            <pre class="bg-gray-900 text-green-400 p-4 rounded-lg text-sm overflow-x-auto max-h-64 overflow-y-auto">{{ event.raw_data | tojson(indent=2) if event.raw_data else '{}' }}</pre>
+        </div>
+
+        <!-- Normalized Data -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Normalized Data</h3>
+            <pre class="bg-gray-900 text-blue-400 p-4 rounded-lg text-sm overflow-x-auto max-h-64 overflow-y-auto">{{ event.normalized_data | tojson(indent=2) if event.normalized_data else '{}' }}</pre>
+        </div>
+    </div>
+
+    <!-- Similar Events (pgvector) -->
+    {% if similar_events %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            Similar Events
+            <span class="text-sm font-normal text-gray-500 ml-2">(via AI vector similarity)</span>
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="text-left text-gray-500 border-b">
+                        <th class="pb-2">Type</th>
+                        <th class="pb-2">Severity</th>
+                        <th class="pb-2">Similarity</th>
+                        <th class="pb-2">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for item in similar_events %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-2">
+                            <a href="{{ url_for('events.detail', event_id=item.event.id) }}" class="text-blue-600 hover:underline">{{ item.event.event_type }}</a>
+                        </td>
+                        <td class="py-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                                {% if item.event.severity == 'critical' %}bg-red-100 text-red-800
+                                {% elif item.event.severity == 'high' %}bg-orange-100 text-orange-800
+                                {% elif item.event.severity == 'medium' %}bg-yellow-100 text-yellow-800
+                                {% elif item.event.severity == 'low' %}bg-blue-100 text-blue-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ item.event.severity }}
+                            </span>
+                        </td>
+                        <td class="py-2">
+                            <div class="flex items-center">
+                                <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: {{ (item.similarity * 100) | int }}%"></div>
+                                </div>
+                                <span class="text-gray-600">{{ (item.similarity * 100) | round(1) }}%</span>
+                            </div>
+                        </td>
+                        <td class="py-2 text-gray-500">{{ item.event.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}{{ incident.incident_number }}{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <a href="{{ url_for('incidents.list_incidents') }}" class="text-sm text-blue-600 hover:underline">&larr; Back to Incidents</a>
+    </div>
+
+    <!-- Incident Header -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm text-gray-500 font-mono">{{ incident.incident_number }}</p>
+                <h1 class="text-2xl font-bold text-gray-900 mt-1">{{ incident.title }}</h1>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                    {% if incident.severity == 'critical' %}bg-red-100 text-red-800
+                    {% elif incident.severity == 'high' %}bg-orange-100 text-orange-800
+                    {% elif incident.severity == 'medium' %}bg-yellow-100 text-yellow-800
+                    {% else %}bg-blue-100 text-blue-800{% endif %}">
+                    {{ incident.severity }}
+                </span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                    {% if incident.status == 'open' %}bg-green-100 text-green-800
+                    {% elif incident.status == 'investigating' %}bg-purple-100 text-purple-800
+                    {% elif incident.status == 'resolved' %}bg-blue-100 text-blue-800
+                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {{ incident.status }}
+                </span>
+            </div>
+        </div>
+        {% if incident.description %}
+        <div class="mt-4 text-sm text-gray-700 whitespace-pre-wrap">{{ incident.description }}</div>
+        {% endif %}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Start Time</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ incident.start_time.strftime('%Y-%m-%d %H:%M') if incident.start_time else '-' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">End Time</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ incident.end_time.strftime('%Y-%m-%d %H:%M') if incident.end_time else 'Ongoing' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Events</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ incident.events | length }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">AI Actions</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ ai_actions | length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Timeline -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6">Event Timeline</h3>
+            {% if timeline_events %}
+            <div class="relative">
+                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+                <div class="space-y-6">
+                    {% for te in timeline_events %}
+                    <div class="relative flex items-start pl-10">
+                        <div class="absolute left-2.5 w-3 h-3 rounded-full border-2 border-white
+                            {% if te.severity == 'critical' %}bg-red-500
+                            {% elif te.severity == 'high' %}bg-orange-500
+                            {% elif te.severity == 'medium' %}bg-yellow-500
+                            {% elif te.severity == 'low' %}bg-blue-500
+                            {% else %}bg-gray-400{% endif %}"></div>
+                        <div class="flex-1 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">{{ te.event }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">Source: {{ te.source }} {% if te.location %}| {{ te.location }}{% endif %}</p>
+                                </div>
+                                <span class="text-xs font-mono text-gray-400">{{ te.time }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <p class="text-gray-400 text-center">No timeline events</p>
+            {% endif %}
+        </div>
+
+        <!-- Right Column: Update + AI Actions -->
+        <div class="space-y-6">
+            <!-- Update Form -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Update Incident</h3>
+                <form method="POST" class="space-y-4">
+                    {{ form.hidden_tag() }}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Status</label>
+                        {{ form.status(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Add Notes</label>
+                        {{ form.notes(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm", rows="3", placeholder="Investigation notes...") }}
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md text-sm font-medium">Update</button>
+                </form>
+            </div>
+
+            <!-- AI Actions -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">AI Actions</h3>
+                {% if ai_actions %}
+                <div class="space-y-3">
+                    {% for action in ai_actions %}
+                    <div class="border border-gray-100 rounded-lg p-3">
+                        <div class="flex justify-between items-start">
+                            <span class="text-sm font-medium text-gray-900">{{ action.action_type }}</span>
+                            <span class="text-xs font-mono text-gray-400">{{ action.timestamp.strftime('%H:%M:%S') }}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Tool: {{ action.tool_used }}</p>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-1
+                            {% if action.status == 'completed' %}bg-green-100 text-green-800
+                            {% elif action.status == 'failed' %}bg-red-100 text-red-800
+                            {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {{ action.status }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-400 text-center text-sm">No AI actions recorded</p>
+                {% endif %}
+            </div>
+
+            <!-- AI Analysis -->
+            {% if incident.ai_analysis %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">AI Analysis</h3>
+                <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ incident.ai_analysis }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

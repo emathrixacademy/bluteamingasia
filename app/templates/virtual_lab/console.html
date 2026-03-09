@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% block title %}{{ lab.name }} - Virtual Lab{% endblock %}
+{% block body_class %}bg-gray-900{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <!-- Lab Header -->
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center space-x-4">
+            <a href="{{ url_for('virtual_lab.lab_list') }}" class="text-gray-400 hover:text-white text-sm">&larr; Labs</a>
+            <h1 class="text-lg font-bold text-white">{{ lab.name }}</h1>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                {% if lab.difficulty == 'beginner' %}bg-green-900 text-green-300
+                {% elif lab.difficulty == 'intermediate' %}bg-yellow-900 text-yellow-300
+                {% elif lab.difficulty == 'advanced' %}bg-orange-900 text-orange-300
+                {% else %}bg-red-900 text-red-300{% endif %}">
+                {{ lab.difficulty | title }}
+            </span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-900 text-green-300 border border-green-700">
+                LIVE
+            </span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('virtual_lab.network_overview') }}" class="text-blue-400 hover:text-blue-300 text-xs border border-blue-800 px-2 py-1 rounded">Network Overview</a>
+            <div class="flex items-center space-x-1">
+                <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                <span class="text-xs text-green-400">Connected</span>
+            </div>
+            <button onclick="clearTerminal()" class="text-gray-400 hover:text-white text-xs border border-gray-600 px-2 py-1 rounded">Clear</button>
+        </div>
+    </div>
+
+    <!-- Tools Bar -->
+    <div class="bg-gray-800 rounded-t-lg px-4 py-2 flex items-center space-x-4 border-b border-gray-700">
+        <span class="text-xs text-gray-400">Tools:</span>
+        {% for tool in lab.tools %}
+        <button onclick="insertCommand('{{ tool }}')" class="text-xs text-blue-400 hover:text-blue-300 font-mono bg-gray-700 px-2 py-0.5 rounded hover:bg-gray-600 transition">{{ tool }}</button>
+        {% endfor %}
+    </div>
+
+    <!-- Terminal -->
+    <div id="terminal" class="bg-black rounded-b-lg p-4 font-mono text-sm h-[65vh] overflow-y-auto border border-gray-700 border-t-0" onclick="document.getElementById('cmd-input').focus()">
+        <!-- Welcome message -->
+        <div class="text-green-400 mb-2">
+            <pre class="text-blue-400">
+ ____  _            _                       _                _         _
+| __ )| |_   _  ___| |_ ___  __ _ _ __ ___ (_)_ __   __ _   / \   ___ (_) __ _
+|  _ \| | | | |/ _ \ __/ _ \/ _` | '_ ` _ \| | '_ \ / _` | / _ \ / __|| |/ _` |
+| |_) | | |_| |  __/ ||  __/ (_| | | | | | | | | | | (_| |/ ___ \\__ \| | (_| |
+|____/|_|\__,_|\___|\__\___|\__,_|_| |_| |_|_|_| |_|\__, /_/   \_\___/|_|\__,_|
+                                                      |___/
+</pre>
+            <p>Welcome to <span class="text-white font-bold">{{ lab.name }}</span></p>
+            <p class="text-yellow-400 font-bold">All commands execute on your REAL network.</p>
+            <p class="text-gray-500">Type <span class="text-yellow-400">help</span> for available commands.</p>
+            <p class="text-gray-500">Lab ID: {{ lab.id }} | Mode: <span class="text-green-400">Live Execution</span></p>
+            <br>
+        </div>
+        <div id="output"></div>
+        <!-- Input line -->
+        <div class="flex items-center">
+            <span class="text-green-400 mr-2">analyst@{{ lab.id }}:~$</span>
+            <input type="text" id="cmd-input" class="flex-1 bg-transparent text-green-300 outline-none font-mono caret-green-400" autocomplete="off" autofocus>
+        </div>
+    </div>
+
+    <!-- Quick Reference -->
+    <div class="mt-4 bg-gray-800 rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-gray-300 mb-2">Quick Reference <span class="text-green-400 text-xs font-normal">(all commands produce real output)</span></h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+            <div class="text-gray-400"><span class="text-yellow-400">ping</span> host - Test connectivity</div>
+            <div class="text-gray-400"><span class="text-yellow-400">tracert</span> host - Trace route</div>
+            <div class="text-gray-400"><span class="text-yellow-400">nslookup</span> domain - DNS lookup</div>
+            <div class="text-gray-400"><span class="text-yellow-400">netstat -an</span> - All connections</div>
+            <div class="text-gray-400"><span class="text-yellow-400">ipconfig /all</span> - Network config</div>
+            <div class="text-gray-400"><span class="text-yellow-400">arp -a</span> - ARP table</div>
+            <div class="text-gray-400"><span class="text-yellow-400">portscan</span> host - Scan ports</div>
+            <div class="text-gray-400"><span class="text-yellow-400">hostscan</span> subnet - Find hosts</div>
+            <div class="text-gray-400"><span class="text-yellow-400">headers</span> url - HTTP headers</div>
+            <div class="text-gray-400"><span class="text-yellow-400">resolve</span> host - DNS resolve</div>
+            <div class="text-gray-400"><span class="text-yellow-400">route print</span> - Routing table</div>
+            <div class="text-gray-400"><span class="text-yellow-400">hostname</span> - Machine name</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const labId = '{{ lab.id }}';
+const terminal = document.getElementById('terminal');
+const output = document.getElementById('output');
+const cmdInput = document.getElementById('cmd-input');
+const commandHistory = [];
+let historyIndex = -1;
+let isExecuting = false;
+
+cmdInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const command = this.value.trim();
+        if (!command || isExecuting) return;
+
+        commandHistory.unshift(command);
+        historyIndex = -1;
+
+        // Show the command in output
+        appendOutput(`<span class="text-green-400">analyst@${labId}:~$</span> <span class="text-white">${escapeHtml(command)}</span>`);
+
+        if (command === 'clear') {
+            output.innerHTML = '';
+            this.value = '';
+            return;
+        }
+
+        this.value = '';
+        executeCommand(command);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            this.value = commandHistory[historyIndex];
+        }
+    } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIndex > 0) {
+            historyIndex--;
+            this.value = commandHistory[historyIndex];
+        } else {
+            historyIndex = -1;
+            this.value = '';
+        }
+    }
+});
+
+async function executeCommand(command) {
+    isExecuting = true;
+    // Show loading indicator
+    const loadingId = 'loading-' + Date.now();
+    appendOutput(`<span id="${loadingId}" class="text-yellow-400 animate-pulse">Executing...</span>`);
+
+    try {
+        const response = await fetch('{{ url_for("virtual_lab.execute_lab_command") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ command, lab_id: labId })
+        });
+        const data = await response.json();
+
+        // Remove loading indicator
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+
+        if (data.output) {
+            // Color code based on whether it's real output
+            const colorClass = data.is_real ? 'text-gray-300' : 'text-gray-500';
+            const badge = data.is_real ? '<span class="text-green-500 text-xs">[LIVE]</span> ' : '';
+            appendOutput(`${badge}<span class="${colorClass}">${escapeHtml(data.output)}</span>`);
+        }
+        if (data.error) {
+            appendOutput(`<span class="text-red-400">${escapeHtml(data.error)}</span>`);
+        }
+    } catch (err) {
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+        appendOutput(`<span class="text-red-400">Error: Connection failed</span>`);
+    }
+    isExecuting = false;
+}
+
+function appendOutput(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    div.className = 'mb-1 whitespace-pre-wrap';
+    output.appendChild(div);
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+function insertCommand(cmd) {
+    cmdInput.value = cmd;
+    cmdInput.focus();
+}
+
+function clearTerminal() {
+    output.innerHTML = '';
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Focus input when clicking terminal
+terminal.addEventListener('click', () => cmdInput.focus());
+</script>
+{% endblock %}

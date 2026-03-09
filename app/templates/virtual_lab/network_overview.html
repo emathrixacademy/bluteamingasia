@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% block title %}Network Overview - Live{% endblock %}
+{% block body_class %}bg-gray-900{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-white">Network Overview</h1>
+            <p class="text-gray-400 text-sm mt-1">Live network status for <span class="text-green-400 font-mono">{{ overview.hostname }}</span></p>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                <span class="text-xs text-green-400">LIVE</span>
+            </div>
+            <button onclick="refreshAll()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg transition">
+                Refresh
+            </button>
+            <a href="{{ url_for('virtual_lab.lab_list') }}" class="text-gray-400 hover:text-white text-sm border border-gray-600 px-4 py-2 rounded-lg">
+                &larr; Labs
+            </a>
+        </div>
+    </div>
+
+    <!-- Connection Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+        <div class="bg-gray-800 rounded-xl p-4 border border-gray-700">
+            <p class="text-xs text-gray-400 uppercase tracking-wider">Total Connections</p>
+            <p class="text-2xl font-bold text-white mt-1" id="stat-total">{{ overview.connections.total }}</p>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-4 border border-green-900">
+            <p class="text-xs text-green-400 uppercase tracking-wider">Established</p>
+            <p class="text-2xl font-bold text-green-400 mt-1" id="stat-established">{{ overview.connections.established }}</p>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-4 border border-blue-900">
+            <p class="text-xs text-blue-400 uppercase tracking-wider">Listening</p>
+            <p class="text-2xl font-bold text-blue-400 mt-1" id="stat-listening">{{ overview.connections.listening }}</p>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-4 border border-yellow-900">
+            <p class="text-xs text-yellow-400 uppercase tracking-wider">Time Wait</p>
+            <p class="text-2xl font-bold text-yellow-400 mt-1" id="stat-timewait">{{ overview.connections.time_wait }}</p>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-4 border border-red-900">
+            <p class="text-xs text-red-400 uppercase tracking-wider">Close Wait</p>
+            <p class="text-2xl font-bold text-red-400 mt-1" id="stat-closewait">{{ overview.connections.close_wait }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Network Interfaces -->
+        <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+                <h2 class="text-sm font-semibold text-white">Network Interfaces</h2>
+                <span class="text-xs text-gray-400">{{ overview.interfaces | length }} adapter(s)</span>
+            </div>
+            <div class="divide-y divide-gray-700 max-h-96 overflow-y-auto">
+                {% for iface in overview.interfaces %}
+                {% if iface.ipv4 %}
+                <div class="px-4 py-3">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium text-white">{{ iface.name }}</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                            {% if iface.status == 'up' %}bg-green-900 text-green-300{% else %}bg-red-900 text-red-300{% endif %}">
+                            {{ iface.status | upper }}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 text-xs">
+                        {% if iface.ipv4 %}
+                        <div><span class="text-gray-500">IPv4:</span> <span class="text-green-400 font-mono">{{ iface.ipv4 }}</span></div>
+                        {% endif %}
+                        {% if iface.mac %}
+                        <div><span class="text-gray-500">MAC:</span> <span class="text-gray-300 font-mono">{{ iface.mac }}</span></div>
+                        {% endif %}
+                        {% if iface.gateway %}
+                        <div><span class="text-gray-500">Gateway:</span> <span class="text-blue-400 font-mono">{{ iface.gateway }}</span></div>
+                        {% endif %}
+                        {% if iface.dns %}
+                        <div><span class="text-gray-500">DNS:</span> <span class="text-gray-300 font-mono">{{ iface.dns }}</span></div>
+                        {% endif %}
+                        {% if iface.dhcp %}
+                        <div><span class="text-gray-500">DHCP:</span> <span class="text-gray-300">{{ iface.dhcp }}</span></div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ARP Table (Network Neighbors) -->
+        <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+                <h2 class="text-sm font-semibold text-white">Network Neighbors (ARP Table)</h2>
+                <span class="text-xs text-gray-400">{{ overview.arp_entries | length }} entries</span>
+            </div>
+            <div class="max-h-96 overflow-y-auto">
+                <table class="w-full text-xs">
+                    <thead class="bg-gray-750">
+                        <tr class="border-b border-gray-700">
+                            <th class="px-4 py-2 text-left text-gray-400 font-medium">IP Address</th>
+                            <th class="px-4 py-2 text-left text-gray-400 font-medium">MAC Address</th>
+                            <th class="px-4 py-2 text-left text-gray-400 font-medium">Type</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700">
+                        {% for entry in overview.arp_entries %}
+                        <tr class="hover:bg-gray-750">
+                            <td class="px-4 py-1.5 text-green-400 font-mono">{{ entry.ip }}</td>
+                            <td class="px-4 py-1.5 text-gray-300 font-mono">{{ entry.mac }}</td>
+                            <td class="px-4 py-1.5">
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs
+                                    {% if entry.type == 'dynamic' %}bg-blue-900 text-blue-300
+                                    {% elif entry.type == 'static' %}bg-purple-900 text-purple-300
+                                    {% else %}bg-gray-700 text-gray-300{% endif %}">
+                                    {{ entry.type }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Connections Table -->
+    <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden mb-6">
+        <div class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+            <h2 class="text-sm font-semibold text-white">Active Connections</h2>
+            <span class="text-xs text-gray-400">Showing top 50</span>
+        </div>
+        <div class="max-h-96 overflow-y-auto">
+            <table class="w-full text-xs">
+                <thead class="sticky top-0 bg-gray-800">
+                    <tr class="border-b border-gray-700">
+                        <th class="px-4 py-2 text-left text-gray-400 font-medium">Proto</th>
+                        <th class="px-4 py-2 text-left text-gray-400 font-medium">Local Address</th>
+                        <th class="px-4 py-2 text-left text-gray-400 font-medium">Remote Address</th>
+                        <th class="px-4 py-2 text-left text-gray-400 font-medium">State</th>
+                        <th class="px-4 py-2 text-left text-gray-400 font-medium">PID</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                    {% for conn in overview.connections.entries %}
+                    <tr class="hover:bg-gray-750">
+                        <td class="px-4 py-1.5 text-gray-300 font-mono">{{ conn.proto }}</td>
+                        <td class="px-4 py-1.5 text-green-400 font-mono">{{ conn.local }}</td>
+                        <td class="px-4 py-1.5 text-blue-400 font-mono">{{ conn.remote }}</td>
+                        <td class="px-4 py-1.5">
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs
+                                {% if conn.state == 'ESTABLISHED' %}bg-green-900 text-green-300
+                                {% elif conn.state == 'LISTENING' %}bg-blue-900 text-blue-300
+                                {% elif conn.state == 'TIME_WAIT' %}bg-yellow-900 text-yellow-300
+                                {% elif conn.state == 'CLOSE_WAIT' %}bg-red-900 text-red-300
+                                {% else %}bg-gray-700 text-gray-300{% endif %}">
+                                {{ conn.state }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-1.5 text-gray-400 font-mono">{{ conn.pid }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+        <h2 class="text-sm font-semibold text-white mb-3">Quick Actions</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <a href="{{ url_for('virtual_lab.lab_console', lab_id='network-monitor') }}"
+               class="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 rounded-lg px-4 py-3 transition">
+                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span class="text-sm text-white">Monitor Network</span>
+            </a>
+            <a href="{{ url_for('virtual_lab.lab_console', lab_id='vuln-scanner') }}"
+               class="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 rounded-lg px-4 py-3 transition">
+                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span class="text-sm text-white">Scan Ports</span>
+            </a>
+            <a href="{{ url_for('virtual_lab.lab_console', lab_id='incident-response') }}"
+               class="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 rounded-lg px-4 py-3 transition">
+                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                <span class="text-sm text-white">Investigate</span>
+            </a>
+            <a href="{{ url_for('virtual_lab.lab_console', lab_id='recon') }}"
+               class="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 rounded-lg px-4 py-3 transition">
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
+                <span class="text-sm text-white">Recon Target</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshAll() {
+    fetch('{{ url_for("virtual_lab.network_status_api") }}')
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('stat-total').textContent = data.connections.total;
+            document.getElementById('stat-established').textContent = data.connections.established;
+            document.getElementById('stat-listening').textContent = data.connections.listening;
+            document.getElementById('stat-timewait').textContent = data.connections.time_wait;
+            document.getElementById('stat-closewait').textContent = data.connections.close_wait;
+        })
+        .catch(err => console.error('Refresh failed:', err));
+}
+
+// Auto-refresh every 15 seconds
+setInterval(refreshAll, 15000);
+</script>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="bg-brand-900 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Get in Touch</h1>
+        <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
+            Whether you need a demo, have a question about pricing, or want to discuss a custom deployment -- we are here to help.
+        </p>
+    </div>
+</section>
+
+<!-- Contact Form + Info -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Contact Info Sidebar -->
+            <div class="lg:col-span-1 space-y-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Contact Information</h2>
+                    <p class="mt-2 text-gray-600 text-sm">Fill out the form and our security experts will get back to you within 24 hours.</p>
+                </div>
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">Email</p>
+                            <p class="text-sm text-gray-600">sales@blueteamingasia.com</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">Office</p>
+                            <p class="text-sm text-gray-600">Singapore & Bangkok</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">Response Time</p>
+                            <p class="text-sm text-gray-600">Within 24 hours</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-3">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li>
+                            <a href="{{ url_for('main.pricing') }}" class="text-blue-600 hover:text-blue-500 font-medium flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                View Pricing Plans
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('auth.register') }}" class="text-blue-600 hover:text-blue-500 font-medium flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                Start Free Account
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="lg:col-span-2">
+                <form method="POST" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                    {{ form.hidden_tag() }}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Name -->
+                        <div>
+                            <label for="{{ form.name.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                {{ form.name.label.text }} <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.name(
+                                class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition placeholder-gray-400",
+                                placeholder="Your full name"
+                            ) }}
+                            {% for error in form.name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label for="{{ form.email.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                {{ form.email.label.text }} <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.email(
+                                class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition placeholder-gray-400",
+                                placeholder="you@company.com"
+                            ) }}
+                            {% for error in form.email.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Company -->
+                        <div>
+                            <label for="{{ form.company.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                {{ form.company.label.text }}
+                            </label>
+                            {{ form.company(
+                                class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition placeholder-gray-400",
+                                placeholder="Your company name"
+                            ) }}
+                            {% for error in form.company.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Plan Interest -->
+                        <div>
+                            <label for="{{ form.plan_interest.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                {{ form.plan_interest.label.text }}
+                            </label>
+                            {{ form.plan_interest(
+                                class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition bg-white"
+                            ) }}
+                            {% for error in form.plan_interest.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="mt-6">
+                        <label for="{{ form.message.id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ form.message.label.text }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.message(
+                            class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition placeholder-gray-400",
+                            rows="6",
+                            placeholder="Tell us about your security needs, the size of your deployment, or any questions you have..."
+                        ) }}
+                        {% for error in form.message.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="mt-8">
+                        <button type="submit" class="w-full sm:w-auto flex justify-center items-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

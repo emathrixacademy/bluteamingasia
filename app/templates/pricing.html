@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% block title %}Pricing{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="bg-brand-900 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Plans & Pricing</h1>
+        <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
+            From a single site to a global security operation. Choose the plan that fits your organization.
+        </p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
+</section>
+
+<!-- Pricing Cards -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <!-- Free -->
+            <div class="bg-white rounded-xl border-2 border-gray-200 p-8 flex flex-col">
+                <h3 class="text-xl font-bold text-gray-900">Free</h3>
+                <p class="mt-2 text-gray-500 text-sm">Get started with basic monitoring</p>
+                <p class="mt-6 text-5xl font-extrabold text-gray-900">$0<span class="text-lg font-medium text-gray-500">/mo</span></p>
+                <ul class="mt-8 space-y-4 text-sm text-gray-600 flex-1">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>Up to <strong>5 Cameras</strong></span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>Up to <strong>10 Devices</strong></span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>1,000</strong> Events per day</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>Basic AI Investigations</span>
+                    </li>
+                    <li class="flex items-start text-gray-400">
+                        <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                        <span>Advanced Analytics</span>
+                    </li>
+                    <li class="flex items-start text-gray-400">
+                        <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                        <span>API Integrations</span>
+                    </li>
+                    <li class="flex items-start text-gray-400">
+                        <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                        <span>Robotics & Drones</span>
+                    </li>
+                    <li class="flex items-start text-gray-400">
+                        <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                        <span>Predictive Security AI</span>
+                    </li>
+                    <li class="flex items-start text-gray-400">
+                        <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                        <span>Private Deployment</span>
+                    </li>
+                </ul>
+                <a href="{{ url_for('auth.register') }}" class="mt-8 block text-center bg-gray-100 hover:bg-gray-200 text-gray-900 py-3 rounded-lg font-semibold transition">Get Started Free</a>
+            </div>
+
+            <!-- Professional -->
+            <div class="bg-white rounded-xl border-2 border-blue-500 p-8 relative shadow-lg flex flex-col">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wide">Most Popular</div>
+                <h3 class="text-xl font-bold text-gray-900">Professional</h3>
+                <p class="mt-2 text-gray-500 text-sm">Full autonomous security operations</p>
+                <p class="mt-6 text-5xl font-extrabold text-gray-900">$499<span class="text-lg font-medium text-gray-500">/mo</span></p>
+                <ul class="mt-8 space-y-4 text-sm text-gray-600 flex-1">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Unlimited</strong> Cameras</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Unlimited</strong> Devices</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Unlimited</strong> Events per day</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>Full Autonomous AI Investigations</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>Advanced Analytics</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>API Integrations</span>
+                    </li>
+                    <li class="flex items-start text-gray-400">
+                        <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                        <span>Robotics & Drones</span>
+                    </li>
+                    <li class="flex items-start text-gray-400">
+                        <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                        <span>Predictive Security AI</span>
+                    </li>
+                    <li class="flex items-start text-gray-400">
+                        <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                        <span>Private Deployment</span>
+                    </li>
+                </ul>
+                <a href="{{ url_for('main.contact') }}" class="mt-8 block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition">Contact Sales</a>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="bg-white rounded-xl border-2 border-gray-200 p-8 flex flex-col">
+                <h3 class="text-xl font-bold text-gray-900">Enterprise</h3>
+                <p class="mt-2 text-gray-500 text-sm">Full platform with robotics & private deployment</p>
+                <p class="mt-6 text-5xl font-extrabold text-gray-900">Custom</p>
+                <ul class="mt-8 space-y-4 text-sm text-gray-600 flex-1">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Unlimited</strong> Cameras</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Unlimited</strong> Devices</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Unlimited</strong> Events per day</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>Full Autonomous AI Investigations</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>Advanced Analytics</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span>API Integrations</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Robotics & Drones</strong></span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Predictive Security AI</strong></span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                        <span><strong>Private Deployment</strong></span>
+                    </li>
+                </ul>
+                <a href="{{ url_for('main.contact') }}" class="mt-8 block text-center bg-gray-100 hover:bg-gray-200 text-gray-900 py-3 rounded-lg font-semibold transition">Contact Sales</a>
+            </div>
+        </div>
+
+        <!-- Feature Comparison Table -->
+        <div class="mt-4">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Detailed Feature Comparison</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-900 w-1/4">Feature</th>
+                            <th class="py-4 px-6 text-center text-sm font-semibold text-gray-900 w-1/4">Free</th>
+                            <th class="py-4 px-6 text-center text-sm font-semibold text-blue-600 w-1/4">
+                                Professional
+                                <span class="block text-xs font-normal text-gray-500 mt-1">$499/mo</span>
+                            </th>
+                            <th class="py-4 px-6 text-center text-sm font-semibold text-gray-900 w-1/4">
+                                Enterprise
+                                <span class="block text-xs font-normal text-gray-500 mt-1">Custom</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">Cameras</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600">5</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600 bg-blue-50/50">Unlimited</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600">Unlimited</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">Devices</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600">10</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600 bg-blue-50/50">Unlimited</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600">Unlimited</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">Events per day</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600">1,000</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600 bg-blue-50/50">Unlimited</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600">Unlimited</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">AI Investigations</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600">Basic</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600 bg-blue-50/50">Full autonomous</td>
+                            <td class="py-4 px-6 text-center text-sm text-gray-600">Full autonomous</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">Advanced Analytics</td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center bg-blue-50/50">
+                                <svg class="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">API Integrations</td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center bg-blue-50/50">
+                                <svg class="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">Robotics & Drones</td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center bg-blue-50/50">
+                                <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">Predictive Security AI</td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center bg-blue-50/50">
+                                <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900">Private Deployment</td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center bg-blue-50/50">
+                                <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                <svg class="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="border-t-2 border-gray-200">
+                            <td class="py-6 px-6"></td>
+                            <td class="py-6 px-6 text-center">
+                                <a href="{{ url_for('auth.register') }}" class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-2 rounded-lg text-sm font-semibold transition">Get Started</a>
+                            </td>
+                            <td class="py-6 px-6 text-center bg-blue-50/50">
+                                <a href="{{ url_for('main.contact') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition">Contact Sales</a>
+                            </td>
+                            <td class="py-6 px-6 text-center">
+                                <a href="{{ url_for('main.contact') }}" class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-2 rounded-lg text-sm font-semibold transition">Contact Sales</a>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
+            <p class="mt-4 text-lg text-gray-600">Everything you need to know about our plans and platform.</p>
+        </div>
+        <div class="space-y-6">
+            <details class="group bg-gray-50 rounded-xl border border-gray-200">
+                <summary class="flex justify-between items-center cursor-pointer px-6 py-5 text-sm font-semibold text-gray-900 select-none">
+                    What is included in the Free plan?
+                    <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                    The Free plan includes up to 5 cameras, 10 devices, and 1,000 events per day. You get basic AI investigation capabilities with our 9-stage threat detection pipeline. It is ideal for small offices or individuals who want to evaluate the platform before upgrading.
+                </div>
+            </details>
+            <details class="group bg-gray-50 rounded-xl border border-gray-200">
+                <summary class="flex justify-between items-center cursor-pointer px-6 py-5 text-sm font-semibold text-gray-900 select-none">
+                    How does the AI Investigation feature differ between plans?
+                    <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                    The Free plan offers basic AI investigation with manual trigger and limited scope. Professional and Enterprise plans unlock full autonomous AI that continuously monitors events, correlates cross-domain threats, generates forensic timelines, and can autonomously execute response actions such as locking doors or isolating network segments.
+                </div>
+            </details>
+            <details class="group bg-gray-50 rounded-xl border border-gray-200">
+                <summary class="flex justify-between items-center cursor-pointer px-6 py-5 text-sm font-semibold text-gray-900 select-none">
+                    What does Private Deployment mean?
+                    <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                    Private Deployment, available on the Enterprise plan, means the entire BlueteamingAsia platform is deployed on your own infrastructure -- whether on-premise or in your private cloud. No data ever leaves your network. This option is designed for organizations with strict compliance or sovereignty requirements.
+                </div>
+            </details>
+            <details class="group bg-gray-50 rounded-xl border border-gray-200">
+                <summary class="flex justify-between items-center cursor-pointer px-6 py-5 text-sm font-semibold text-gray-900 select-none">
+                    What are the Robotics & Drones capabilities?
+                    <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                    Enterprise plans include integration with security robots and drones for autonomous patrol, perimeter monitoring, and incident response. The AI can dispatch drones to investigate alerts, provide live video feeds from hard-to-reach areas, and coordinate robotic patrols based on threat intelligence.
+                </div>
+            </details>
+            <details class="group bg-gray-50 rounded-xl border border-gray-200">
+                <summary class="flex justify-between items-center cursor-pointer px-6 py-5 text-sm font-semibold text-gray-900 select-none">
+                    Can I upgrade my plan at any time?
+                    <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                    Yes. You can upgrade from Free to Professional at any time through your account settings. Upgrading to Enterprise requires contacting our sales team for a customized deployment plan. All existing data, device configurations, and historical events are preserved during the upgrade.
+                </div>
+            </details>
+            <details class="group bg-gray-50 rounded-xl border border-gray-200">
+                <summary class="flex justify-between items-center cursor-pointer px-6 py-5 text-sm font-semibold text-gray-900 select-none">
+                    Do you offer a trial for the Professional plan?
+                    <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                    Yes. We offer a 14-day free trial of the Professional plan with full access to all features including unlimited devices, advanced analytics, and API integrations. No credit card is required to start. <a href="{{ url_for('main.contact') }}" class="text-blue-600 hover:text-blue-500 font-medium">Contact us</a> to request a trial.
+                </div>
+            </details>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 bg-brand-900">
+    <div class="max-w-4xl mx-auto text-center px-4">
+        <h2 class="text-3xl font-bold text-white">Not sure which plan is right for you?</h2>
+        <p class="mt-4 text-lg text-gray-300">Our security experts can help you evaluate your needs and recommend the best solution.</p>
+        <div class="mt-8 flex justify-center space-x-4">
+            <a href="{{ url_for('auth.register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition">Start Free</a>
+            <a href="{{ url_for('main.contact') }}" class="border border-gray-400 text-gray-300 hover:text-white hover:border-white px-8 py-3 rounded-lg text-lg font-semibold transition">Schedule Demo</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

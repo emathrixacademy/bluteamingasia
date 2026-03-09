@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}{{ device.name }}{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <a href="{{ url_for('devices.list_devices') }}" class="text-sm text-blue-600 hover:underline">&larr; Back to Devices</a>
+    </div>
+
+    <!-- Device Info Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ device.name }}</h1>
+                <p class="text-sm text-gray-500 mt-1 font-mono">ID: {{ device.id }}</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                {% if device.status == 'active' %}bg-green-100 text-green-800
+                {% elif device.status == 'offline' %}bg-red-100 text-red-800
+                {% elif device.status == 'maintenance' %}bg-yellow-100 text-yellow-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ device.status }}
+            </span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Type</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ device.device_type | replace('_', ' ') | title }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Location</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ device.location or 'Not set' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">IP Address</p>
+                <p class="text-sm font-medium text-gray-900 mt-1 font-mono">{{ device.ip_address or 'Not set' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 uppercase">Registered</p>
+                <p class="text-sm font-medium text-gray-900 mt-1">{{ device.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Events from this Device -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Events</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="text-left text-gray-500 border-b">
+                        <th class="pb-2">Type</th>
+                        <th class="pb-2">Severity</th>
+                        <th class="pb-2">Location</th>
+                        <th class="pb-2">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for event in recent_events %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-2">
+                            <a href="{{ url_for('events.detail', event_id=event.id) }}" class="text-blue-600 hover:underline">{{ event.event_type }}</a>
+                        </td>
+                        <td class="py-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                                {% if event.severity == 'critical' %}bg-red-100 text-red-800
+                                {% elif event.severity == 'high' %}bg-orange-100 text-orange-800
+                                {% elif event.severity == 'medium' %}bg-yellow-100 text-yellow-800
+                                {% elif event.severity == 'low' %}bg-blue-100 text-blue-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ event.severity }}
+                            </span>
+                        </td>
+                        <td class="py-2 text-gray-600">{{ event.location or '-' }}</td>
+                        <td class="py-2 text-gray-500">{{ event.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" class="py-4 text-gray-400 text-center">No events from this device</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

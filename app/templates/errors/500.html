@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}500 - Server Error{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center">
+    <div class="text-center">
+        <p class="text-6xl font-bold text-red-600">500</p>
+        <h1 class="mt-4 text-3xl font-bold text-gray-900">Server Error</h1>
+        <p class="mt-2 text-gray-600">Something went wrong on our end. Please try again later.</p>
+        <div class="mt-6">
+            <a href="{{ url_for('main.landing') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium">Go Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
