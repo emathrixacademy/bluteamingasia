@@ -1,146 +1,192 @@
 {% extends 'base.html' %}
 {% block title %}Packet Tracer Simulation{% endblock %}
-{% block body_class %}bg-gray-100{% endblock %}
+{% block body_class %}bg-gray-900{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Packet Tracer Simulation</h1>
-            <p class="text-sm text-gray-500 mt-1">Visualize packet paths across real network hops with live traceroute data</p>
+<div class="h-screen flex flex-col overflow-hidden" style="margin-top:-1rem;">
+    <!-- Top Toolbar -->
+    <div class="bg-gray-800 border-b border-gray-700 px-4 py-2 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('virtual_lab.lab_list') }}" class="text-gray-400 hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            </a>
+            <h1 class="text-lg font-bold text-white">Packet Tracer Simulation</h1>
+            <span class="text-xs text-gray-500 bg-gray-700 px-2 py-0.5 rounded">Interactive Network Builder</span>
         </div>
-        <a href="{{ url_for('virtual_lab.lab_list') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition">Back to Labs</a>
+        <div class="flex items-center gap-2">
+            <button onclick="clearCanvas()" class="text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded transition">Clear All</button>
+            <button onclick="loadExample()" class="text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded transition">Load Example</button>
+            <button onclick="exportTopology()" class="text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded transition">Export JSON</button>
+        </div>
     </div>
 
-    <!-- Trace Configuration -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Configure Trace</h3>
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-            <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Source</label>
-                <select id="trace-source" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="this-machine">This Machine ({{ overview.hostname }})</option>
-                    {% for ip in overview.local_ips %}
-                    <option value="{{ ip }}">{{ ip }}</option>
-                    {% endfor %}
-                </select>
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Left Panel: Device Palette -->
+        <div class="w-56 bg-gray-800 border-r border-gray-700 flex flex-col flex-shrink-0 overflow-y-auto">
+            <div class="px-3 py-3 border-b border-gray-700">
+                <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Devices</h2>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Destination</label>
-                <input type="text" id="trace-dest" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 8.8.8.8 or google.com" value="8.8.8.8">
+            <div class="p-2 space-y-1">
+                <div class="device-palette-item" draggable="true" data-device-type="pc"
+                     ondragstart="onDragStartPalette(event, 'pc')">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-xl">💻</div>
+                    <div>
+                        <p class="text-sm font-medium text-white">PC / Host</p>
+                        <p class="text-xs text-gray-500">End device</p>
+                    </div>
+                </div>
+                <div class="device-palette-item" draggable="true" data-device-type="laptop"
+                     ondragstart="onDragStartPalette(event, 'laptop')">
+                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-xl">💻</div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Laptop</p>
+                        <p class="text-xs text-gray-500">End device</p>
+                    </div>
+                </div>
+                <div class="device-palette-item" draggable="true" data-device-type="server"
+                     ondragstart="onDragStartPalette(event, 'server')">
+                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center text-xl">🖥️</div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Server</p>
+                        <p class="text-xs text-gray-500">Network server</p>
+                    </div>
+                </div>
+                <div class="device-palette-item" draggable="true" data-device-type="router"
+                     ondragstart="onDragStartPalette(event, 'router')">
+                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-xl">🔀</div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Router</p>
+                        <p class="text-xs text-gray-500">Layer 3 device</p>
+                    </div>
+                </div>
+                <div class="device-palette-item" draggable="true" data-device-type="switch"
+                     ondragstart="onDragStartPalette(event, 'switch')">
+                    <div class="w-10 h-10 bg-yellow-600 rounded-lg flex items-center justify-center text-xl">🔄</div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Switch</p>
+                        <p class="text-xs text-gray-500">Layer 2 device</p>
+                    </div>
+                </div>
+                <div class="device-palette-item" draggable="true" data-device-type="firewall"
+                     ondragstart="onDragStartPalette(event, 'firewall')">
+                    <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-xl">🛡️</div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Firewall</p>
+                        <p class="text-xs text-gray-500">Security device</p>
+                    </div>
+                </div>
+                <div class="device-palette-item" draggable="true" data-device-type="cloud"
+                     ondragstart="onDragStartPalette(event, 'cloud')">
+                    <div class="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center text-xl">☁️</div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Cloud / Internet</p>
+                        <p class="text-xs text-gray-500">WAN connection</p>
+                    </div>
+                </div>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Protocol</label>
-                <select id="trace-proto" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="TCP">TCP</option>
-                    <option value="UDP">UDP</option>
-                    <option value="ICMP">ICMP</option>
-                </select>
+
+            <div class="px-3 py-3 border-t border-b border-gray-700 mt-2">
+                <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tools</h2>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Port</label>
-                <input type="number" id="trace-port" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" value="80" min="1" max="65535">
-            </div>
-            <div>
-                <button id="btn-trace" onclick="startTrace()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
-                    Trace Packet
+            <div class="p-2 space-y-1">
+                <button onclick="setMode('select')" id="tool-select" class="tool-btn active">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                    <span>Select / Move</span>
+                </button>
+                <button onclick="setMode('connect')" id="tool-connect" class="tool-btn">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                    <span>Connect Devices</span>
+                </button>
+                <button onclick="setMode('delete')" id="tool-delete" class="tool-btn">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <span>Delete</span>
                 </button>
             </div>
-        </div>
-        <!-- Quick Targets -->
-        <div class="mt-3 flex flex-wrap gap-2">
-            <span class="text-xs text-gray-500">Quick:</span>
-            <button onclick="setTarget('8.8.8.8', 53)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">Google DNS :53</button>
-            <button onclick="setTarget('1.1.1.1', 443)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">Cloudflare :443</button>
-            <button onclick="setTarget('github.com', 443)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">GitHub :443</button>
-            <button onclick="setTarget('cloudflare.com', 80)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">Cloudflare :80</button>
-            <button onclick="setTarget('192.168.1.1', 80)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">Gateway :80</button>
-        </div>
-    </div>
 
-    <!-- Trace Visualization -->
-    <div id="trace-result" class="hidden">
-        <!-- Summary Bar -->
-        <div id="trace-summary" class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-            <div class="flex flex-wrap items-center gap-6">
-                <div>
-                    <span class="text-xs text-gray-500">Status</span>
-                    <p id="sum-status" class="text-sm font-bold"></p>
-                </div>
-                <div>
-                    <span class="text-xs text-gray-500">Total Hops</span>
-                    <p id="sum-hops" class="text-sm font-bold text-gray-900"></p>
-                </div>
-                <div>
-                    <span class="text-xs text-gray-500">Total Latency</span>
-                    <p id="sum-latency" class="text-sm font-bold text-gray-900"></p>
-                </div>
-                <div>
-                    <span class="text-xs text-gray-500">Protocol</span>
-                    <p id="sum-proto" class="text-sm font-bold text-gray-900"></p>
-                </div>
-                <div>
-                    <span class="text-xs text-gray-500">Port</span>
-                    <p id="sum-port" class="text-sm font-bold text-gray-900"></p>
-                </div>
-                <div>
-                    <span class="text-xs text-gray-500">Destination</span>
-                    <p id="sum-dest" class="text-sm font-bold text-gray-900 font-mono"></p>
+            <!-- Simulation Controls -->
+            <div class="px-3 py-3 border-t border-gray-700 mt-auto">
+                <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Simulation</h2>
+                <div class="space-y-2">
+                    <div>
+                        <label class="text-xs text-gray-500">From Device</label>
+                        <select id="sim-source" class="w-full bg-gray-700 border border-gray-600 text-white text-xs rounded px-2 py-1.5 mt-0.5">
+                            <option value="">-- Select source --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">To Device</label>
+                        <select id="sim-dest" class="w-full bg-gray-700 border border-gray-600 text-white text-xs rounded px-2 py-1.5 mt-0.5">
+                            <option value="">-- Select destination --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">Protocol</label>
+                        <select id="sim-proto" class="w-full bg-gray-700 border border-gray-600 text-white text-xs rounded px-2 py-1.5 mt-0.5">
+                            <option value="ICMP">ICMP (Ping)</option>
+                            <option value="TCP">TCP</option>
+                            <option value="UDP">UDP</option>
+                            <option value="ARP">ARP</option>
+                        </select>
+                    </div>
+                    <!-- Speed Control -->
+                    <div>
+                        <label class="text-xs text-gray-500">Packet Speed</label>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <input type="range" id="sim-speed" min="1" max="5" value="3" step="1"
+                                   class="flex-1 h-1.5 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-green-500"
+                                   oninput="updateSpeedLabel()">
+                            <span id="speed-label" class="text-xs text-green-400 font-mono w-14 text-right">1.0x</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-600 mt-0.5">
+                            <span>Slow</span>
+                            <span>Fast</span>
+                        </div>
+                    </div>
+                    <button onclick="simulatePacket()" id="btn-simulate"
+                            class="w-full bg-green-600 hover:bg-green-500 text-white text-sm font-medium px-3 py-2 rounded transition flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+                        Send Packet
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Visual Path -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Network Path Visualization</h3>
-            <div id="path-visual" class="flex items-center justify-start overflow-x-auto pb-4 gap-0">
-                <!-- Filled by JS -->
+        <!-- Center: Canvas Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="flex-1 relative" id="canvas-container">
+                <!-- Canvas is for drawing only, no pointer events -->
+                <canvas id="topology-canvas" class="absolute inset-0" style="z-index:0; pointer-events:none;"></canvas>
+                <!-- Transparent click catcher sits on top of canvas but behind device overlays -->
+                <div id="canvas-click-layer" class="absolute inset-0" style="z-index:1;"></div>
+                <!-- Device overlays on top -->
+                <div id="device-overlays" class="absolute inset-0" style="z-index:2; pointer-events:none;"></div>
+                <!-- Hint overlay -->
+                <div id="canvas-hint" class="absolute top-3 left-1/2 -translate-x-1/2 bg-gray-800 bg-opacity-90 text-gray-300 text-xs px-3 py-1.5 rounded hidden" style="z-index:10; pointer-events:none;">
+                    Click a device to start connecting
+                </div>
+            </div>
+
+            <!-- Bottom: Simulation Log -->
+            <div id="sim-log-panel" class="bg-gray-800 border-t border-gray-700 flex-shrink-0" style="height:180px;">
+                <div class="flex items-center justify-between px-4 py-1.5 border-b border-gray-700">
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase">Simulation Output</h3>
+                    <button onclick="clearLog()" class="text-xs text-gray-500 hover:text-gray-300">Clear</button>
+                </div>
+                <div id="sim-log" class="p-3 overflow-y-auto font-mono text-xs space-y-0.5" style="height:140px;">
+                    <div class="text-gray-500">Ready. Drag devices onto the canvas to build your network topology.</div>
+                </div>
             </div>
         </div>
 
-        <!-- Hop Detail Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Hop-by-Hop Detail</h3>
+        <!-- Right Panel: Device Config -->
+        <div id="config-panel" class="w-72 bg-gray-800 border-l border-gray-700 flex-shrink-0 overflow-y-auto hidden">
+            <div class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+                <h2 class="text-sm font-semibold text-white" id="config-title">Device Configuration</h2>
+                <button onclick="closeConfig()" class="text-gray-500 hover:text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
             </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hop</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Node IP</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Label</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Latency</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody id="hop-table" class="divide-y divide-gray-100">
-                        <!-- Filled by JS -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Packet Lifecycle -->
-        <div class="bg-brand-900 rounded-xl shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-white mb-4">Packet Lifecycle</h3>
-            <div id="packet-lifecycle" class="space-y-2 font-mono text-sm">
-                <!-- Filled by JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading -->
-    <div id="trace-loading" class="hidden">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <div class="inline-flex items-center gap-3">
-                <svg class="animate-spin h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span class="text-lg text-gray-700">Tracing packet route... (this uses real traceroute)</span>
+            <div id="config-body" class="p-4 space-y-4">
             </div>
         </div>
     </div>
@@ -148,189 +194,816 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-function setTarget(host, port) {
-    document.getElementById('trace-dest').value = host;
-    document.getElementById('trace-port').value = port;
-}
-
-async function startTrace() {
-    const source = document.getElementById('trace-source').value;
-    const dest = document.getElementById('trace-dest').value.trim();
-    const proto = document.getElementById('trace-proto').value;
-    const port = document.getElementById('trace-port').value;
-
-    if (!dest) { alert('Enter a destination'); return; }
-
-    const btn = document.getElementById('btn-trace');
-    btn.disabled = true;
-    btn.textContent = 'Tracing...';
-
-    document.getElementById('trace-result').classList.add('hidden');
-    document.getElementById('trace-loading').classList.remove('hidden');
-
-    try {
-        const resp = await fetch('{{ url_for("virtual_lab.packet_trace_api") }}', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
-            body: JSON.stringify({ source, destination: dest, protocol: proto, port: parseInt(port) })
-        });
-        const data = await resp.json();
-        if (data.error) { alert(data.error); return; }
-        renderTrace(data);
-    } catch (e) {
-        alert('Trace failed: ' + e.message);
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Trace Packet';
-        document.getElementById('trace-loading').classList.add('hidden');
-    }
-}
-
-function renderTrace(data) {
-    document.getElementById('trace-result').classList.remove('hidden');
-
-    // Summary
-    const statusEl = document.getElementById('sum-status');
-    if (data.port_open) {
-        statusEl.textContent = 'PORT OPEN';
-        statusEl.className = 'text-sm font-bold text-green-600';
-    } else if (data.status === 'filtered') {
-        statusEl.textContent = 'FILTERED';
-        statusEl.className = 'text-sm font-bold text-yellow-600';
-    } else {
-        statusEl.textContent = data.status.toUpperCase();
-        statusEl.className = 'text-sm font-bold text-gray-600';
-    }
-    document.getElementById('sum-hops').textContent = data.total_hops;
-    document.getElementById('sum-latency').textContent = data.total_latency_ms + ' ms';
-    document.getElementById('sum-proto').textContent = data.protocol;
-    document.getElementById('sum-port').textContent = data.port;
-    document.getElementById('sum-dest').textContent = data.destination_host + ' (' + data.destination + ')';
-
-    // Visual path
-    const pathEl = document.getElementById('path-visual');
-    pathEl.innerHTML = '';
-    data.hops.forEach((hop, i) => {
-        // Node
-        const nodeDiv = document.createElement('div');
-        nodeDiv.className = 'flex flex-col items-center min-w-[90px] opacity-0';
-        nodeDiv.style.animation = `fadeInUp 0.4s ease ${i * 0.15}s forwards`;
-
-        let color = 'bg-gray-500';
-        let icon = '';
-        if (hop.type === 'endpoint' && i === 0) {
-            color = 'bg-blue-600'; icon = '💻';
-        } else if (hop.type === 'endpoint') {
-            color = data.port_open ? 'bg-green-600' : 'bg-red-500'; icon = '🖥️';
-        } else if (hop.type === 'gateway') {
-            color = 'bg-yellow-500'; icon = '🔀';
-        } else {
-            color = 'bg-gray-600'; icon = '🔁';
-        }
-
-        const latencyColor = hop.latency_ms > 100 ? 'text-red-500' : hop.latency_ms > 30 ? 'text-yellow-600' : 'text-green-600';
-
-        nodeDiv.innerHTML = `
-            <div class="w-14 h-14 ${color} rounded-xl flex items-center justify-center text-2xl shadow-lg">${icon}</div>
-            <p class="text-xs font-medium text-gray-900 mt-2 text-center">${hop.label}</p>
-            <p class="text-xs font-mono text-gray-500">${hop.node}</p>
-            <p class="text-xs font-bold ${latencyColor}">${hop.latency_ms}ms</p>
-        `;
-        pathEl.appendChild(nodeDiv);
-
-        // Arrow between nodes
-        if (i < data.hops.length - 1) {
-            const arrow = document.createElement('div');
-            arrow.className = 'flex items-center px-1 opacity-0';
-            arrow.style.animation = `fadeInUp 0.3s ease ${i * 0.15 + 0.1}s forwards`;
-            arrow.innerHTML = `
-                <div class="relative">
-                    <div class="w-12 h-0.5 bg-blue-300"></div>
-                    <div class="packet-dot absolute top-1/2 left-0 w-2 h-2 bg-blue-500 rounded-full -translate-y-1/2" style="animation: packetMove 1.5s ease-in-out ${i * 0.3}s infinite"></div>
-                    <svg class="w-4 h-4 text-blue-400 absolute -right-2 top-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </div>
-            `;
-            pathEl.appendChild(arrow);
-        }
-    });
-
-    // Hop table
-    const tableEl = document.getElementById('hop-table');
-    tableEl.innerHTML = '';
-    data.hops.forEach(hop => {
-        const typeColor = hop.type === 'endpoint' ? 'bg-blue-100 text-blue-800'
-                        : hop.type === 'gateway' ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-600';
-        const latencyColor = hop.latency_ms > 100 ? 'text-red-600 font-bold'
-                           : hop.latency_ms > 30 ? 'text-yellow-600' : 'text-green-600';
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-50';
-        tr.innerHTML = `
-            <td class="px-6 py-3 text-sm font-mono text-gray-900">${hop.hop}</td>
-            <td class="px-6 py-3"><code class="text-sm bg-gray-50 px-1.5 py-0.5 rounded">${hop.node}</code></td>
-            <td class="px-6 py-3 text-sm font-medium text-gray-900">${hop.label}</td>
-            <td class="px-6 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${typeColor}">${hop.type}</span></td>
-            <td class="px-6 py-3 text-sm ${latencyColor}">${hop.latency_ms} ms</td>
-            <td class="px-6 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${hop.status}</span></td>
-            <td class="px-6 py-3 text-xs text-gray-500">${hop.detail}</td>
-        `;
-        tableEl.appendChild(tr);
-    });
-
-    // Packet lifecycle
-    const lifecycleEl = document.getElementById('packet-lifecycle');
-    lifecycleEl.innerHTML = '';
-    const steps = [
-        { time: '0.000s', event: `[SRC] Application creates ${data.protocol} packet`, color: 'text-blue-400' },
-        { time: '0.001s', event: `[SRC] Packet encapsulated: ${data.protocol} → IP → Ethernet`, color: 'text-blue-300' },
-        { time: '0.002s', event: `[SRC] ARP resolution for gateway`, color: 'text-gray-400' },
-        { time: '0.003s', event: `[SRC] Frame sent to gateway (Hop 1)`, color: 'text-green-400' },
-    ];
-    data.hops.forEach((hop, i) => {
-        if (i > 0 && i < data.hops.length - 1) {
-            steps.push({
-                time: `${(hop.latency_ms / 1000).toFixed(3)}s`,
-                event: `[HOP ${hop.hop}] ${hop.node} → TTL decremented, packet forwarded`,
-                color: 'text-yellow-400',
-            });
-        }
-    });
-    if (data.protocol === 'TCP') {
-        steps.push({ time: `${(data.total_latency_ms / 1000).toFixed(3)}s`, event: `[DST] ${data.destination}:${data.port} → SYN received`, color: 'text-cyan-400' });
-        if (data.port_open) {
-            steps.push({ time: `${(data.total_latency_ms / 1000 + 0.001).toFixed(3)}s`, event: `[DST] SYN-ACK sent back to ${data.source}`, color: 'text-green-400' });
-            steps.push({ time: `${(data.total_latency_ms * 2 / 1000).toFixed(3)}s`, event: `[SRC] ACK sent → TCP handshake COMPLETE`, color: 'text-green-300' });
-        } else {
-            steps.push({ time: `${(data.total_latency_ms / 1000 + 0.001).toFixed(3)}s`, event: `[DST] RST sent → Port ${data.port} CLOSED/FILTERED`, color: 'text-red-400' });
-        }
-    } else if (data.protocol === 'ICMP') {
-        steps.push({ time: `${(data.total_latency_ms / 1000).toFixed(3)}s`, event: `[DST] ICMP Echo Reply sent`, color: 'text-green-400' });
-    } else {
-        steps.push({ time: `${(data.total_latency_ms / 1000).toFixed(3)}s`, event: `[DST] UDP datagram received at port ${data.port}`, color: 'text-cyan-400' });
-    }
-
-    steps.forEach((step, i) => {
-        const div = document.createElement('div');
-        div.className = `${step.color} opacity-0`;
-        div.style.animation = `fadeInUp 0.3s ease ${i * 0.08}s forwards`;
-        div.innerHTML = `<span class="text-gray-500">[${step.time}]</span> ${step.event}`;
-        lifecycleEl.appendChild(div);
-    });
-
-    // Scroll to results
-    document.getElementById('trace-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-</script>
 <style>
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.device-palette-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.5rem; border-radius: 0.5rem; cursor: grab;
+    transition: background 0.15s;
 }
-@keyframes packetMove {
-    0% { left: 0; }
-    50% { left: calc(100% - 8px); }
-    100% { left: 0; }
+.device-palette-item:hover { background: rgba(255,255,255,0.05); }
+.device-palette-item:active { cursor: grabbing; }
+
+.tool-btn {
+    display: flex; align-items: center; gap: 0.5rem; width: 100%;
+    padding: 0.5rem; border-radius: 0.5rem; font-size: 0.8rem;
+    color: #9ca3af; transition: all 0.15s; border: 1px solid transparent;
+}
+.tool-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+.tool-btn.active { background: rgba(59,130,246,0.2); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
+
+.device-node {
+    position: absolute; pointer-events: all; cursor: move;
+    display: flex; flex-direction: column; align-items: center;
+    user-select: none; padding: 4px;
+}
+.device-node:hover .device-icon { box-shadow: 0 0 0 3px rgba(59,130,246,0.5); }
+.device-node.selected .device-icon { box-shadow: 0 0 0 3px rgba(59,130,246,0.8); }
+.device-node.connect-hover .device-icon { box-shadow: 0 0 0 3px rgba(34,197,94,0.8); }
+.device-node.sim-active .device-icon { box-shadow: 0 0 12px rgba(34,197,94,0.8); }
+
+.device-icon {
+    width: 56px; height: 56px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; transition: box-shadow 0.2s;
+}
+
+.device-label {
+    margin-top: 4px; font-size: 0.7rem; font-weight: 600;
+    color: #fff; text-align: center; max-width: 80px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.device-ip {
+    font-size: 0.6rem; color: #9ca3af; font-family: monospace;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* Speed slider custom styling */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #22c55e; cursor: pointer; border: 2px solid #fff;
+}
+input[type="range"]::-moz-range-thumb {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #22c55e; cursor: pointer; border: 2px solid #fff;
 }
 </style>
+
+<script>
+// ─── State ───
+const devices = [];
+const connections = [];
+let nextId = 1;
+let mode = 'select';
+let selectedDevice = null;
+let connectFrom = null;
+let dragging = null;
+let dragOffset = { x: 0, y: 0 };
+let animatingPackets = [];
+let mousePos = null;
+
+const DEVICE_TYPES = {
+    pc:       { icon: '💻', color: 'bg-blue-600',   name: 'PC',       ports: 1,  layer: 'endpoint' },
+    laptop:   { icon: '💻', color: 'bg-blue-500',   name: 'Laptop',   ports: 1,  layer: 'endpoint' },
+    server:   { icon: '🖥️', color: 'bg-purple-600', name: 'Server',   ports: 2,  layer: 'endpoint' },
+    router:   { icon: '🔀', color: 'bg-green-600',  name: 'Router',   ports: 4,  layer: 'network'  },
+    switch:   { icon: '🔄', color: 'bg-yellow-600', name: 'Switch',   ports: 8,  layer: 'datalink' },
+    firewall: { icon: '🛡️', color: 'bg-red-600',    name: 'Firewall', ports: 4,  layer: 'network'  },
+    cloud:    { icon: '☁️', color: 'bg-cyan-600',   name: 'Internet', ports: 2,  layer: 'network'  },
+};
+
+// ─── Speed Control ───
+// Speed values: 1=very slow(0.25x), 2=slow(0.5x), 3=normal(1x), 4=fast(2x), 5=very fast(4x)
+const SPEED_MAP = { 1: 0.25, 2: 0.5, 3: 1.0, 4: 2.0, 5: 4.0 };
+const SPEED_LABELS = { 1: '0.25x', 2: '0.5x', 3: '1.0x', 4: '2.0x', 5: '4.0x' };
+
+function getSpeedMultiplier() {
+    const val = parseInt(document.getElementById('sim-speed').value);
+    return SPEED_MAP[val] || 1.0;
+}
+
+function getStepDelay() {
+    // Base step is 800ms, divided by speed multiplier
+    return Math.round(800 / getSpeedMultiplier());
+}
+
+function getHopDuration() {
+    // Base hop animation is 600ms, divided by speed multiplier
+    return Math.round(600 / getSpeedMultiplier());
+}
+
+function updateSpeedLabel() {
+    const val = parseInt(document.getElementById('sim-speed').value);
+    const label = document.getElementById('speed-label');
+    label.textContent = SPEED_LABELS[val] || '1.0x';
+    // Color code the label
+    if (val <= 1) { label.className = 'text-xs text-red-400 font-mono w-14 text-right'; }
+    else if (val === 2) { label.className = 'text-xs text-yellow-400 font-mono w-14 text-right'; }
+    else if (val === 3) { label.className = 'text-xs text-green-400 font-mono w-14 text-right'; }
+    else if (val === 4) { label.className = 'text-xs text-blue-400 font-mono w-14 text-right'; }
+    else { label.className = 'text-xs text-purple-400 font-mono w-14 text-right'; }
+}
+
+// ─── Canvas Setup ───
+const canvas = document.getElementById('topology-canvas');
+const ctx = canvas.getContext('2d');
+const container = document.getElementById('canvas-container');
+const overlays = document.getElementById('device-overlays');
+const clickLayer = document.getElementById('canvas-click-layer');
+
+function resizeCanvas() {
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+    draw();
+}
+window.addEventListener('resize', resizeCanvas);
+setTimeout(resizeCanvas, 50);
+
+// ─── Drawing ───
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+
+    // Connections
+    connections.forEach(conn => {
+        const d1 = devices.find(d => d.id === conn.from);
+        const d2 = devices.find(d => d.id === conn.to);
+        if (!d1 || !d2) return;
+
+        const x1 = d1.x + 28, y1 = d1.y + 28;
+        const x2 = d2.x + 28, y2 = d2.y + 28;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = conn.active ? '#22c55e' : conn.down ? '#ef4444' : '#4b5563';
+        ctx.lineWidth = conn.active ? 3 : 2;
+        ctx.stroke();
+
+        // Link status dot
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+        ctx.fillStyle = conn.down ? '#ef4444' : '#22c55e';
+        ctx.beginPath();
+        ctx.arc(mx, my, 4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // Connection-in-progress dashed line
+    if (mode === 'connect' && connectFrom && mousePos) {
+        const d = devices.find(dd => dd.id === connectFrom);
+        if (d) {
+            ctx.beginPath();
+            ctx.moveTo(d.x + 28, d.y + 28);
+            ctx.lineTo(mousePos.x, mousePos.y);
+            ctx.strokeStyle = 'rgba(59,130,246,0.6)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    }
+
+    // Animated packets
+    animatingPackets.forEach(pkt => {
+        const d1 = devices.find(d => d.id === pkt.from);
+        const d2 = devices.find(d => d.id === pkt.to);
+        if (!d1 || !d2) return;
+
+        const x1 = d1.x + 28, y1 = d1.y + 28;
+        const x2 = d2.x + 28, y2 = d2.y + 28;
+        const t = pkt.progress;
+        const px = x1 + (x2 - x1) * t;
+        const py = y1 + (y2 - y1) * t;
+
+        // Glow
+        ctx.beginPath();
+        ctx.arc(px, py, 12, 0, Math.PI * 2);
+        const grad = ctx.createRadialGradient(px, py, 0, px, py, 12);
+        const pktColor = pkt.protocol === 'ICMP' ? '59,130,246' :
+                         pkt.protocol === 'TCP' ? '34,197,94' :
+                         pkt.protocol === 'ARP' ? '234,179,8' : '168,85,247';
+        grad.addColorStop(0, `rgba(${pktColor},0.9)`);
+        grad.addColorStop(1, `rgba(${pktColor},0)`);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Dot
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${pktColor},1)`;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+}
+
+// ─── Mouse tracking on clickLayer (transparent layer above canvas, below devices) ───
+clickLayer.addEventListener('mousemove', e => {
+    const rect = container.getBoundingClientRect();
+    mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    if (mode === 'connect' && connectFrom) draw();
+});
+
+clickLayer.addEventListener('click', e => {
+    // Clicked on empty canvas area (not on a device)
+    if (mode === 'connect' && connectFrom) {
+        connectFrom = null;
+        document.getElementById('canvas-hint').textContent = 'Click a device to start connecting';
+        draw();
+    }
+    selectedDevice = null;
+    closeConfig();
+    renderDevices();
+});
+
+// Set cursor on click layer based on mode
+function updateClickLayerCursor() {
+    clickLayer.style.cursor = mode === 'connect' ? 'crosshair' : mode === 'delete' ? 'not-allowed' : 'default';
+}
+
+// ─── Drag & Drop from palette ───
+container.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
+container.addEventListener('drop', e => {
+    e.preventDefault();
+    const type = e.dataTransfer.getData('device-type');
+    if (!type || !DEVICE_TYPES[type]) return;
+    const rect = container.getBoundingClientRect();
+    addDevice(type, e.clientX - rect.left - 28, e.clientY - rect.top - 28);
+});
+
+// ─── Device Rendering ───
+function renderDevices() {
+    overlays.innerHTML = '';
+    devices.forEach(dev => {
+        const type = DEVICE_TYPES[dev.type];
+        const el = document.createElement('div');
+        el.className = `device-node${selectedDevice === dev.id ? ' selected' : ''}`;
+        el.id = `dev-${dev.id}`;
+        el.style.left = dev.x + 'px';
+        el.style.top = dev.y + 'px';
+        el.innerHTML = `
+            <div class="device-icon ${type.color}">${type.icon}</div>
+            <div class="device-label">${dev.name}</div>
+            ${dev.ip ? `<div class="device-ip">${dev.ip}</div>` : ''}
+        `;
+
+        // All mouse events go through device nodes
+        el.addEventListener('mousedown', e => { e.preventDefault(); e.stopPropagation(); onDeviceMouseDown(e, dev.id); });
+        el.addEventListener('mouseup', e => { e.stopPropagation(); onDeviceMouseUp(e, dev.id); });
+        el.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); onDeviceClick(e, dev.id); });
+        el.addEventListener('dblclick', e => { e.stopPropagation(); openConfig(dev.id); });
+        el.addEventListener('contextmenu', e => { e.preventDefault(); openConfig(dev.id); });
+
+        // Hover feedback in connect mode
+        el.addEventListener('mouseenter', () => {
+            if (mode === 'connect' && connectFrom && connectFrom !== dev.id) {
+                el.classList.add('connect-hover');
+            }
+        });
+        el.addEventListener('mouseleave', () => {
+            el.classList.remove('connect-hover');
+        });
+
+        overlays.appendChild(el);
+    });
+    updateSimSelects();
+    draw();
+}
+
+function addDevice(type, x, y) {
+    const typeInfo = DEVICE_TYPES[type];
+    const count = devices.filter(d => d.type === type).length;
+    const dev = {
+        id: nextId++,
+        type: type,
+        name: `${typeInfo.name}${count}`,
+        x: Math.max(0, Math.min(x, canvas.width - 56)),
+        y: Math.max(0, Math.min(y, canvas.height - 90)),
+        ip: '',
+        subnet: '255.255.255.0',
+        gateway: '',
+        mac: generateMAC(),
+        services: [],
+        blockedPorts: [],
+        enabled: true,
+    };
+    if (type === 'router') {
+        dev.ip = `10.0.${count}.1`;
+    } else if (type === 'switch') {
+        dev.ip = '';
+    } else if (type === 'firewall') {
+        dev.ip = `10.0.0.${254 - count}`;
+    } else if (type === 'cloud') {
+        dev.ip = '0.0.0.0';
+    } else {
+        dev.ip = `192.168.1.${10 + devices.filter(d => ['pc','laptop','server'].includes(d.type)).length}`;
+    }
+    devices.push(dev);
+    log(`[DEVICE] Added ${typeInfo.name} "${dev.name}" ${dev.ip ? '(' + dev.ip + ')' : ''}`, 'text-blue-400');
+    renderDevices();
+}
+
+function generateMAC() {
+    const hex = '0123456789ABCDEF';
+    let mac = 'AA:BB:CC';
+    for (let i = 0; i < 3; i++) mac += ':' + hex[Math.floor(Math.random()*16)] + hex[Math.floor(Math.random()*16)];
+    return mac;
+}
+
+// ─── Device Mouse Handlers ───
+function onDeviceMouseDown(e, id) {
+    if (mode === 'select') {
+        dragging = id;
+        const dev = devices.find(d => d.id === id);
+        const rect = container.getBoundingClientRect();
+        dragOffset = { x: e.clientX - rect.left - dev.x, y: e.clientY - rect.top - dev.y };
+        selectedDevice = id;
+        renderDevices();
+    }
+}
+
+function onDeviceMouseUp(e, id) {
+    if (dragging === id) {
+        dragging = null;
+    }
+}
+
+// Global mousemove for dragging (on document so dragging works even outside the container)
+document.addEventListener('mousemove', e => {
+    if (dragging !== null) {
+        const dev = devices.find(d => d.id === dragging);
+        if (!dev) return;
+        const rect = container.getBoundingClientRect();
+        dev.x = Math.max(0, Math.min(e.clientX - rect.left - dragOffset.x, canvas.width - 56));
+        dev.y = Math.max(0, Math.min(e.clientY - rect.top - dragOffset.y, canvas.height - 90));
+        const el = document.getElementById(`dev-${dev.id}`);
+        if (el) { el.style.left = dev.x + 'px'; el.style.top = dev.y + 'px'; }
+        draw();
+    }
+    // Track mouse for connect line
+    if (mode === 'connect' && connectFrom) {
+        const rect = container.getBoundingClientRect();
+        mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        draw();
+    }
+});
+document.addEventListener('mouseup', () => { dragging = null; });
+
+function onDeviceClick(e, id) {
+    if (mode === 'delete') {
+        deleteDevice(id);
+        return;
+    }
+    if (mode === 'connect') {
+        if (!connectFrom) {
+            connectFrom = id;
+            const dev = devices.find(d => d.id === id);
+            document.getElementById('canvas-hint').textContent = `Connecting from ${dev.name} — click target device`;
+            document.getElementById('canvas-hint').classList.remove('hidden');
+            log(`[LINK] Source: ${dev.name} — now click target device...`, 'text-yellow-400');
+        } else if (connectFrom !== id) {
+            const exists = connections.some(c =>
+                (c.from === connectFrom && c.to === id) || (c.from === id && c.to === connectFrom)
+            );
+            if (!exists) {
+                connections.push({ from: connectFrom, to: id, active: false, down: false, bandwidth: '1 Gbps' });
+                const d1 = devices.find(d => d.id === connectFrom);
+                const d2 = devices.find(d => d.id === id);
+                log(`[LINK] Connected ${d1.name} ↔ ${d2.name}`, 'text-green-400');
+            } else {
+                log(`[LINK] Connection already exists`, 'text-yellow-400');
+            }
+            connectFrom = null;
+            document.getElementById('canvas-hint').textContent = 'Click a device to start connecting';
+            draw();
+        } else {
+            // Clicked same device, cancel
+            connectFrom = null;
+            document.getElementById('canvas-hint').textContent = 'Click a device to start connecting';
+        }
+        return;
+    }
+    // Select mode
+    selectedDevice = id;
+    renderDevices();
+}
+
+function deleteDevice(id) {
+    const dev = devices.find(d => d.id === id);
+    if (!dev) return;
+    for (let i = connections.length - 1; i >= 0; i--) {
+        if (connections[i].from === id || connections[i].to === id) connections.splice(i, 1);
+    }
+    devices.splice(devices.indexOf(dev), 1);
+    log(`[DELETE] Removed ${dev.name}`, 'text-red-400');
+    if (selectedDevice === id) { selectedDevice = null; closeConfig(); }
+    renderDevices();
+}
+
+// ─── Mode ───
+function setMode(m) {
+    mode = m;
+    connectFrom = null;
+    dragging = null;
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(`tool-${m}`).classList.add('active');
+    const hint = document.getElementById('canvas-hint');
+    if (m === 'connect') {
+        hint.textContent = 'Click a device to start connecting';
+        hint.classList.remove('hidden');
+    } else if (m === 'delete') {
+        hint.textContent = 'Click a device to delete it';
+        hint.classList.remove('hidden');
+    } else {
+        hint.classList.add('hidden');
+    }
+    updateClickLayerCursor();
+    // Update device cursors
+    document.querySelectorAll('.device-node').forEach(el => {
+        el.style.cursor = m === 'connect' ? 'crosshair' : m === 'delete' ? 'pointer' : 'move';
+    });
+}
+
+// ─── Config Panel ───
+function openConfig(id) {
+    const dev = devices.find(d => d.id === id);
+    if (!dev) return;
+    selectedDevice = id;
+    const panel = document.getElementById('config-panel');
+    const type = DEVICE_TYPES[dev.type];
+    document.getElementById('config-title').textContent = `${type.icon} ${type.name} Config`;
+
+    const body = document.getElementById('config-body');
+    let html = `
+        <div>
+            <label class="text-xs text-gray-400">Device Name</label>
+            <input type="text" value="${dev.name}" onchange="updateDev(${id},'name',this.value)"
+                   class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded px-2 py-1.5 mt-0.5">
+        </div>
+        <div>
+            <label class="text-xs text-gray-400">MAC Address</label>
+            <input type="text" value="${dev.mac}" readonly
+                   class="w-full bg-gray-900 border border-gray-700 text-gray-400 text-xs font-mono rounded px-2 py-1.5 mt-0.5">
+        </div>`;
+
+    if (dev.type !== 'switch') {
+        html += `
+        <div>
+            <label class="text-xs text-gray-400">IP Address</label>
+            <input type="text" value="${dev.ip}" onchange="updateDev(${id},'ip',this.value)"
+                   class="w-full bg-gray-700 border border-gray-600 text-white text-sm font-mono rounded px-2 py-1.5 mt-0.5"
+                   placeholder="e.g. 192.168.1.10">
+        </div>
+        <div>
+            <label class="text-xs text-gray-400">Subnet Mask</label>
+            <input type="text" value="${dev.subnet}" onchange="updateDev(${id},'subnet',this.value)"
+                   class="w-full bg-gray-700 border border-gray-600 text-white text-sm font-mono rounded px-2 py-1.5 mt-0.5">
+        </div>
+        <div>
+            <label class="text-xs text-gray-400">Default Gateway</label>
+            <input type="text" value="${dev.gateway}" onchange="updateDev(${id},'gateway',this.value)"
+                   class="w-full bg-gray-700 border border-gray-600 text-white text-sm font-mono rounded px-2 py-1.5 mt-0.5"
+                   placeholder="e.g. 192.168.1.1">
+        </div>`;
+    }
+
+    if (dev.type === 'server') {
+        html += `
+        <div>
+            <label class="text-xs text-gray-400">Services (comma-separated ports)</label>
+            <input type="text" value="${(dev.services||[]).join(',')}" onchange="updateDev(${id},'services',this.value.split(',').map(s=>s.trim()).filter(s=>s))"
+                   class="w-full bg-gray-700 border border-gray-600 text-white text-sm font-mono rounded px-2 py-1.5 mt-0.5"
+                   placeholder="80,443,22">
+        </div>`;
+    }
+
+    if (dev.type === 'firewall') {
+        html += `
+        <div>
+            <label class="text-xs text-gray-400">Blocked Ports (comma-separated)</label>
+            <input type="text" value="${(dev.blockedPorts||[]).join(',')}" onchange="updateDev(${id},'blockedPorts',this.value.split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n)))"
+                   class="w-full bg-gray-700 border border-gray-600 text-white text-sm font-mono rounded px-2 py-1.5 mt-0.5"
+                   placeholder="23,3389,445">
+        </div>`;
+    }
+
+    const conns = connections.filter(c => c.from === id || c.to === id);
+    if (conns.length > 0) {
+        html += `<div class="border-t border-gray-700 pt-3">
+            <label class="text-xs text-gray-400">Connected To</label>
+            <div class="space-y-1 mt-1">`;
+        conns.forEach(c => {
+            const otherId = c.from === id ? c.to : c.from;
+            const other = devices.find(d => d.id === otherId);
+            if (other) {
+                html += `<div class="flex items-center justify-between bg-gray-700 rounded px-2 py-1">
+                    <span class="text-xs text-white">${DEVICE_TYPES[other.type].icon} ${other.name}</span>
+                    <button onclick="removeConnection(${c.from},${c.to})" class="text-red-400 hover:text-red-300 text-xs">✕</button>
+                </div>`;
+            }
+        });
+        html += `</div></div>`;
+    }
+
+    html += `
+        <div class="border-t border-gray-700 pt-3">
+            <button onclick="deleteDevice(${id})" class="w-full bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded transition">Delete Device</button>
+        </div>`;
+
+    body.innerHTML = html;
+    panel.classList.remove('hidden');
+    renderDevices();
+}
+
+function closeConfig() {
+    document.getElementById('config-panel').classList.add('hidden');
+}
+
+function updateDev(id, field, value) {
+    const dev = devices.find(d => d.id === id);
+    if (dev) { dev[field] = value; renderDevices(); }
+}
+
+function removeConnection(fromId, toId) {
+    const idx = connections.findIndex(c => c.from === fromId && c.to === toId);
+    if (idx >= 0) {
+        connections.splice(idx, 1);
+        log(`[LINK] Disconnected link`, 'text-red-400');
+        renderDevices();
+        if (selectedDevice) openConfig(selectedDevice);
+    }
+}
+
+// ─── Simulation Selects ───
+function updateSimSelects() {
+    const srcSel = document.getElementById('sim-source');
+    const dstSel = document.getElementById('sim-dest');
+    const srcVal = srcSel.value;
+    const dstVal = dstSel.value;
+    srcSel.innerHTML = '<option value="">-- Select source --</option>';
+    dstSel.innerHTML = '<option value="">-- Select destination --</option>';
+    devices.filter(d => d.type !== 'switch').forEach(d => {
+        const opt = `<option value="${d.id}">${DEVICE_TYPES[d.type].icon} ${d.name} ${d.ip ? '('+d.ip+')' : ''}</option>`;
+        srcSel.innerHTML += opt;
+        dstSel.innerHTML += opt;
+    });
+    srcSel.value = srcVal;
+    dstSel.value = dstVal;
+}
+
+// ─── Packet Simulation ───
+function simulatePacket() {
+    const srcId = parseInt(document.getElementById('sim-source').value);
+    const dstId = parseInt(document.getElementById('sim-dest').value);
+    const protocol = document.getElementById('sim-proto').value;
+
+    if (!srcId || !dstId) { log('[ERROR] Select source and destination devices', 'text-red-400'); return; }
+    if (srcId === dstId) { log('[ERROR] Source and destination must be different', 'text-red-400'); return; }
+
+    const src = devices.find(d => d.id === srcId);
+    const dst = devices.find(d => d.id === dstId);
+
+    if (!src.ip && src.type !== 'switch') { log(`[ERROR] ${src.name} has no IP configured`, 'text-red-400'); return; }
+    if (!dst.ip && dst.type !== 'switch') { log(`[ERROR] ${dst.name} has no IP configured`, 'text-red-400'); return; }
+
+    const path = findPath(srcId, dstId);
+    if (!path) {
+        log(`[FAIL] No path from ${src.name} to ${dst.name}. Devices not connected.`, 'text-red-400');
+        return;
+    }
+
+    const step = getStepDelay();
+    const speed = getSpeedMultiplier();
+    log(`\n─── ${protocol} Simulation: ${src.name} (${src.ip}) → ${dst.name} (${dst.ip}) [Speed: ${speed}x] ───`, 'text-cyan-400');
+
+    let delay = 0;
+
+    // ARP
+    if (protocol === 'ARP') {
+        log(`[${src.name}] ARP Request: Who has ${dst.ip}? Tell ${src.ip}`, 'text-yellow-400');
+        delay += step;
+        animatePacketPath(path, protocol);
+        setTimeout(() => {
+            log(`[BROADCAST] ARP Request flooded to all devices on segment`, 'text-yellow-300');
+        }, delay);
+        delay += step;
+        setTimeout(() => {
+            log(`[${dst.name}] ARP Reply: ${dst.ip} is at ${dst.mac}`, 'text-green-400');
+        }, delay);
+        delay += step;
+        setTimeout(() => {
+            log(`[${src.name}] ARP table updated: ${dst.ip} → ${dst.mac}`, 'text-blue-400');
+            log(`[SUCCESS] ARP resolution complete`, 'text-green-400');
+        }, delay);
+        return;
+    }
+
+    // Step through each hop
+    for (let i = 0; i < path.length; i++) {
+        const dev = devices.find(d => d.id === path[i]);
+
+        if (i === 0) {
+            setTimeout(((d) => () => {
+                log(`[${d.name}] Creating ${protocol} packet: src=${src.ip} dst=${dst.ip}`, 'text-blue-400');
+                log(`[${d.name}] Encapsulation: ${protocol} → IP → Ethernet (MAC: ${d.mac})`, 'text-blue-300');
+                highlightDevice(d.id);
+            })(dev), delay);
+            delay += step;
+
+            if (i < path.length - 1) {
+                setTimeout(((f, t) => () => { animateOneHop(f, t, protocol); })(path[i], path[i+1]), delay);
+                delay += step;
+            }
+        } else if (i === path.length - 1) {
+            setTimeout(((d) => () => {
+                highlightDevice(d.id);
+                log(`[${d.name}] Packet received at ${d.ip}`, 'text-green-400');
+                if (protocol === 'ICMP') {
+                    log(`[${d.name}] ICMP Echo Request → sending Echo Reply`, 'text-green-300');
+                    log(`[SUCCESS] Ping successful: ${src.name} → ${dst.name} (${path.length - 1} hops)`, 'text-green-400');
+                } else if (protocol === 'TCP') {
+                    log(`[${d.name}] TCP SYN received on port 80`, 'text-green-300');
+                    log(`[${d.name}] Sending SYN-ACK to ${src.ip}`, 'text-green-300');
+                    log(`[SUCCESS] TCP 3-way handshake complete (${path.length - 1} hops)`, 'text-green-400');
+                } else {
+                    log(`[${d.name}] UDP datagram received`, 'text-green-300');
+                    log(`[SUCCESS] UDP packet delivered (${path.length - 1} hops)`, 'text-green-400');
+                }
+            })(dev), delay);
+        } else {
+            const nextDev = devices.find(d => d.id === path[i + 1]);
+            setTimeout(((d, nd) => () => {
+                highlightDevice(d.id);
+                if (d.type === 'switch') {
+                    log(`[${d.name}] Switch: MAC lookup → forwarding to port for ${nd.mac}`, 'text-yellow-400');
+                } else if (d.type === 'router') {
+                    log(`[${d.name}] Router: Routing lookup for ${dst.ip}`, 'text-green-400');
+                    log(`[${d.name}] Next hop: ${nd.ip || nd.name}, TTL decremented`, 'text-green-300');
+                } else if (d.type === 'firewall') {
+                    log(`[${d.name}] Firewall: Inspecting ${protocol} packet...`, 'text-orange-400');
+                    log(`[${d.name}] ACL check: PERMIT`, 'text-green-400');
+                } else {
+                    log(`[${d.name}] Forwarding toward ${dst.ip}`, 'text-gray-400');
+                }
+            })(dev, nextDev), delay);
+            delay += step;
+
+            if (i < path.length - 1) {
+                setTimeout(((f, t) => () => { animateOneHop(f, t, protocol); })(path[i], path[i+1]), delay);
+                delay += step;
+            }
+        }
+    }
+}
+
+function findPath(srcId, dstId) {
+    const visited = new Set();
+    const queue = [[srcId]];
+    visited.add(srcId);
+    while (queue.length > 0) {
+        const path = queue.shift();
+        const current = path[path.length - 1];
+        if (current === dstId) return path;
+        connections.forEach(c => {
+            let neighbor = null;
+            if (c.from === current && !visited.has(c.to)) neighbor = c.to;
+            if (c.to === current && !visited.has(c.from)) neighbor = c.from;
+            if (neighbor !== null) {
+                visited.add(neighbor);
+                queue.push([...path, neighbor]);
+            }
+        });
+    }
+    return null;
+}
+
+function animateOneHop(fromId, toId, protocol) {
+    const pkt = { from: fromId, to: toId, protocol, progress: 0 };
+    animatingPackets.push(pkt);
+
+    const conn = connections.find(c =>
+        (c.from === fromId && c.to === toId) || (c.from === toId && c.to === fromId));
+    if (conn) conn.active = true;
+
+    const duration = getHopDuration();
+    const start = performance.now();
+
+    function animate(time) {
+        pkt.progress = Math.min((time - start) / duration, 1);
+        draw();
+        if (pkt.progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            const idx = animatingPackets.indexOf(pkt);
+            if (idx >= 0) animatingPackets.splice(idx, 1);
+            if (conn) conn.active = false;
+            draw();
+        }
+    }
+    requestAnimationFrame(animate);
+}
+
+function highlightDevice(id) {
+    const el = document.getElementById(`dev-${id}`);
+    if (el) {
+        el.classList.add('sim-active');
+        setTimeout(() => el.classList.remove('sim-active'), Math.max(400, getStepDelay()));
+    }
+}
+
+function animatePacketPath(path, protocol) {
+    const hopDelay = getStepDelay();
+    for (let i = 0; i < path.length - 1; i++) {
+        setTimeout(((f, t) => () => { animateOneHop(f, t, protocol); })(path[i], path[i+1]), i * hopDelay);
+    }
+}
+
+// ─── Logging ───
+function log(msg, colorClass = 'text-gray-400') {
+    const el = document.getElementById('sim-log');
+    const div = document.createElement('div');
+    div.className = colorClass;
+    const time = new Date().toLocaleTimeString();
+    div.innerHTML = `<span class="text-gray-600">[${time}]</span> ${msg}`;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+}
+
+function clearLog() {
+    document.getElementById('sim-log').innerHTML = '<div class="text-gray-500">Log cleared.</div>';
+}
+
+// ─── Utility ───
+function clearCanvas() {
+    devices.length = 0;
+    connections.length = 0;
+    animatingPackets.length = 0;
+    selectedDevice = null;
+    connectFrom = null;
+    closeConfig();
+    renderDevices();
+    log('[SYSTEM] Canvas cleared', 'text-gray-500');
+}
+
+function loadExample() {
+    clearCanvas();
+
+    addDevice('pc', 80, 100);
+    addDevice('pc', 80, 280);
+    addDevice('switch', 250, 190);
+    addDevice('router', 450, 190);
+    addDevice('firewall', 650, 190);
+    addDevice('router', 850, 190);
+    addDevice('server', 1050, 130);
+    addDevice('server', 1050, 280);
+    addDevice('cloud', 650, 40);
+
+    devices[0].ip = '192.168.1.10'; devices[0].gateway = '192.168.1.1';
+    devices[1].ip = '192.168.1.11'; devices[1].gateway = '192.168.1.1';
+    devices[3].ip = '192.168.1.1';
+    devices[4].ip = '10.0.0.254';
+    devices[5].ip = '10.0.1.1';
+    devices[6].ip = '10.0.1.10'; devices[6].services = ['80','443','22'];
+    devices[7].ip = '10.0.1.11'; devices[7].services = ['3306','5432'];
+    devices[8].ip = '0.0.0.0';
+
+    connections.push({ from: devices[0].id, to: devices[2].id, active: false, down: false });
+    connections.push({ from: devices[1].id, to: devices[2].id, active: false, down: false });
+    connections.push({ from: devices[2].id, to: devices[3].id, active: false, down: false });
+    connections.push({ from: devices[3].id, to: devices[4].id, active: false, down: false });
+    connections.push({ from: devices[4].id, to: devices[5].id, active: false, down: false });
+    connections.push({ from: devices[5].id, to: devices[6].id, active: false, down: false });
+    connections.push({ from: devices[5].id, to: devices[7].id, active: false, down: false });
+    connections.push({ from: devices[4].id, to: devices[8].id, active: false, down: false });
+
+    log('[SYSTEM] Example loaded: 2 PCs → Switch → Router → Firewall → Router → 2 Servers + Cloud', 'text-cyan-400');
+    renderDevices();
+}
+
+function exportTopology() {
+    const data = { devices: devices.map(d => ({...d})), connections: connections.map(c => ({...c})) };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'network-topology.json';
+    a.click();
+    log('[EXPORT] Topology exported as JSON', 'text-green-400');
+}
+
+// ─── Init ───
+resizeCanvas();
+updateSpeedLabel();
+</script>
 {% endblock %}

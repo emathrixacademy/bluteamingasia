@@ -122,8 +122,7 @@ def network_status_api():
 @login_required
 def packet_tracer():
     """Interactive packet tracer simulation with visual network topology."""
-    overview = get_network_overview()
-    return render_template('virtual_lab/packet_tracer.html', overview=overview)
+    return render_template('virtual_lab/packet_tracer.html')
 
 
 @virtual_lab_bp.route('/api/packet-trace', methods=['POST'])
