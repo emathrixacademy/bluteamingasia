@@ -416,25 +416,19 @@ clickLayer.addEventListener('mousemove', e => {
     if (mode === 'connect' && connectFrom) draw();
 });
 
-clickLayer.addEventListener('click', e => {
-    // Clicked on empty canvas area (not on a device)
-    if (mode === 'connect' && connectFrom) {
-        connectFrom = null;
-        document.getElementById('canvas-hint').textContent = 'Click a device to start connecting';
-        draw();
-    }
-    selectedDevice = null;
-    closeConfig();
-    renderDevices();
-});
-
 // Set cursor on click layer based on mode
 function updateClickLayerCursor() {
     clickLayer.style.cursor = mode === 'connect' ? 'crosshair' : mode === 'delete' ? 'not-allowed' : 'default';
 }
 
 // ─── Drag & Drop from palette ───
-// Drag-and-drop: listen on clickLayer (it's the topmost interactive layer over canvas)
+// This function MUST be global — called from inline ondragstart attributes
+function onDragStartPalette(e, type) {
+    e.dataTransfer.setData('device-type', type);
+    e.dataTransfer.effectAllowed = 'copy';
+}
+
+// Listen on clickLayer (topmost interactive layer over canvas)
 clickLayer.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
 clickLayer.addEventListener('drop', e => {
     e.preventDefault();
@@ -451,6 +445,42 @@ container.addEventListener('drop', e => {
     if (!type || !DEVICE_TYPES[type]) return;
     const rect = container.getBoundingClientRect();
     addDevice(type, e.clientX - rect.left - 28, e.clientY - rect.top - 28);
+});
+
+// ─── Click-to-place alternative (click palette item, then click canvas) ───
+let pendingDeviceType = null;
+
+document.querySelectorAll('.device-palette-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const type = item.getAttribute('data-device-type');
+        if (type && DEVICE_TYPES[type]) {
+            pendingDeviceType = type;
+            document.getElementById('canvas-hint').textContent = `Click on the canvas to place ${DEVICE_TYPES[type].name}`;
+            document.getElementById('canvas-hint').classList.remove('hidden');
+            clickLayer.style.cursor = 'copy';
+        }
+    });
+});
+
+clickLayer.addEventListener('click', e => {
+    if (pendingDeviceType) {
+        const rect = container.getBoundingClientRect();
+        addDevice(pendingDeviceType, e.clientX - rect.left - 28, e.clientY - rect.top - 28);
+        pendingDeviceType = null;
+        document.getElementById('canvas-hint').classList.add('hidden');
+        updateClickLayerCursor();
+        e.stopPropagation();
+        return;
+    }
+    // Normal click behavior (deselect, cancel connect, etc.)
+    if (mode === 'connect' && connectFrom) {
+        connectFrom = null;
+        document.getElementById('canvas-hint').textContent = 'Click a device to start connecting';
+        draw();
+    }
+    selectedDevice = null;
+    closeConfig();
+    renderDevices();
 });
 
 // ─── Device Rendering ───
