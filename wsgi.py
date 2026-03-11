@@ -26,3 +26,14 @@ with app.app_context():
             KnowledgeDocument.__table__._columns.remove(KnowledgeDocument.__table__.columns['embedding'])
 
     db.create_all()
+
+    # Seed default admin user if no users exist
+    from app.models.user import User
+    if User.query.count() == 0:
+        admin = User(
+            email='admin@blueteamingasia.com',
+            name='Admin',
+        )
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
