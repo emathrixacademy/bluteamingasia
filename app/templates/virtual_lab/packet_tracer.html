@@ -434,6 +434,16 @@ function updateClickLayerCursor() {
 }
 
 // ─── Drag & Drop from palette ───
+// Drag-and-drop: listen on clickLayer (it's the topmost interactive layer over canvas)
+clickLayer.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
+clickLayer.addEventListener('drop', e => {
+    e.preventDefault();
+    const type = e.dataTransfer.getData('device-type');
+    if (!type || !DEVICE_TYPES[type]) return;
+    const rect = container.getBoundingClientRect();
+    addDevice(type, e.clientX - rect.left - 28, e.clientY - rect.top - 28);
+});
+// Also on container as fallback
 container.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
 container.addEventListener('drop', e => {
     e.preventDefault();
