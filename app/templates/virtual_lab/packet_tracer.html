@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+{% block title %}Packet Tracer Simulation{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Packet Tracer Simulation</h1>
+            <p class="text-sm text-gray-500 mt-1">Visualize packet paths across real network hops with live traceroute data</p>
+        </div>
+        <a href="{{ url_for('virtual_lab.lab_list') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition">Back to Labs</a>
+    </div>
+
+    <!-- Trace Configuration -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Configure Trace</h3>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Source</label>
+                <select id="trace-source" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="this-machine">This Machine ({{ overview.hostname }})</option>
+                    {% for ip in overview.local_ips %}
+                    <option value="{{ ip }}">{{ ip }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Destination</label>
+                <input type="text" id="trace-dest" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 8.8.8.8 or google.com" value="8.8.8.8">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Protocol</label>
+                <select id="trace-proto" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="TCP">TCP</option>
+                    <option value="UDP">UDP</option>
+                    <option value="ICMP">ICMP</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Port</label>
+                <input type="number" id="trace-port" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" value="80" min="1" max="65535">
+            </div>
+            <div>
+                <button id="btn-trace" onclick="startTrace()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                    Trace Packet
+                </button>
+            </div>
+        </div>
+        <!-- Quick Targets -->
+        <div class="mt-3 flex flex-wrap gap-2">
+            <span class="text-xs text-gray-500">Quick:</span>
+            <button onclick="setTarget('8.8.8.8', 53)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">Google DNS :53</button>
+            <button onclick="setTarget('1.1.1.1', 443)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">Cloudflare :443</button>
+            <button onclick="setTarget('github.com', 443)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">GitHub :443</button>
+            <button onclick="setTarget('cloudflare.com', 80)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">Cloudflare :80</button>
+            <button onclick="setTarget('192.168.1.1', 80)" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded">Gateway :80</button>
+        </div>
+    </div>
+
+    <!-- Trace Visualization -->
+    <div id="trace-result" class="hidden">
+        <!-- Summary Bar -->
+        <div id="trace-summary" class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+            <div class="flex flex-wrap items-center gap-6">
+                <div>
+                    <span class="text-xs text-gray-500">Status</span>
+                    <p id="sum-status" class="text-sm font-bold"></p>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500">Total Hops</span>
+                    <p id="sum-hops" class="text-sm font-bold text-gray-900"></p>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500">Total Latency</span>
+                    <p id="sum-latency" class="text-sm font-bold text-gray-900"></p>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500">Protocol</span>
+                    <p id="sum-proto" class="text-sm font-bold text-gray-900"></p>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500">Port</span>
+                    <p id="sum-port" class="text-sm font-bold text-gray-900"></p>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500">Destination</span>
+                    <p id="sum-dest" class="text-sm font-bold text-gray-900 font-mono"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual Path -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Network Path Visualization</h3>
+            <div id="path-visual" class="flex items-center justify-start overflow-x-auto pb-4 gap-0">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- Hop Detail Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Hop-by-Hop Detail</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hop</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Node IP</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Label</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Latency</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hop-table" class="divide-y divide-gray-100">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Packet Lifecycle -->
+        <div class="bg-brand-900 rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-white mb-4">Packet Lifecycle</h3>
+            <div id="packet-lifecycle" class="space-y-2 font-mono text-sm">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="trace-loading" class="hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+            <div class="inline-flex items-center gap-3">
+                <svg class="animate-spin h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-lg text-gray-700">Tracing packet route... (this uses real traceroute)</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function setTarget(host, port) {
+    document.getElementById('trace-dest').value = host;
+    document.getElementById('trace-port').value = port;
+}
+
+async function startTrace() {
+    const source = document.getElementById('trace-source').value;
+    const dest = document.getElementById('trace-dest').value.trim();
+    const proto = document.getElementById('trace-proto').value;
+    const port = document.getElementById('trace-port').value;
+
+    if (!dest) { alert('Enter a destination'); return; }
+
+    const btn = document.getElementById('btn-trace');
+    btn.disabled = true;
+    btn.textContent = 'Tracing...';
+
+    document.getElementById('trace-result').classList.add('hidden');
+    document.getElementById('trace-loading').classList.remove('hidden');
+
+    try {
+        const resp = await fetch('{{ url_for("virtual_lab.packet_trace_api") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+            body: JSON.stringify({ source, destination: dest, protocol: proto, port: parseInt(port) })
+        });
+        const data = await resp.json();
+        if (data.error) { alert(data.error); return; }
+        renderTrace(data);
+    } catch (e) {
+        alert('Trace failed: ' + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Trace Packet';
+        document.getElementById('trace-loading').classList.add('hidden');
+    }
+}
+
+function renderTrace(data) {
+    document.getElementById('trace-result').classList.remove('hidden');
+
+    // Summary
+    const statusEl = document.getElementById('sum-status');
+    if (data.port_open) {
+        statusEl.textContent = 'PORT OPEN';
+        statusEl.className = 'text-sm font-bold text-green-600';
+    } else if (data.status === 'filtered') {
+        statusEl.textContent = 'FILTERED';
+        statusEl.className = 'text-sm font-bold text-yellow-600';
+    } else {
+        statusEl.textContent = data.status.toUpperCase();
+        statusEl.className = 'text-sm font-bold text-gray-600';
+    }
+    document.getElementById('sum-hops').textContent = data.total_hops;
+    document.getElementById('sum-latency').textContent = data.total_latency_ms + ' ms';
+    document.getElementById('sum-proto').textContent = data.protocol;
+    document.getElementById('sum-port').textContent = data.port;
+    document.getElementById('sum-dest').textContent = data.destination_host + ' (' + data.destination + ')';
+
+    // Visual path
+    const pathEl = document.getElementById('path-visual');
+    pathEl.innerHTML = '';
+    data.hops.forEach((hop, i) => {
+        // Node
+        const nodeDiv = document.createElement('div');
+        nodeDiv.className = 'flex flex-col items-center min-w-[90px] opacity-0';
+        nodeDiv.style.animation = `fadeInUp 0.4s ease ${i * 0.15}s forwards`;
+
+        let color = 'bg-gray-500';
+        let icon = '';
+        if (hop.type === 'endpoint' && i === 0) {
+            color = 'bg-blue-600'; icon = '💻';
+        } else if (hop.type === 'endpoint') {
+            color = data.port_open ? 'bg-green-600' : 'bg-red-500'; icon = '🖥️';
+        } else if (hop.type === 'gateway') {
+            color = 'bg-yellow-500'; icon = '🔀';
+        } else {
+            color = 'bg-gray-600'; icon = '🔁';
+        }
+
+        const latencyColor = hop.latency_ms > 100 ? 'text-red-500' : hop.latency_ms > 30 ? 'text-yellow-600' : 'text-green-600';
+
+        nodeDiv.innerHTML = `
+            <div class="w-14 h-14 ${color} rounded-xl flex items-center justify-center text-2xl shadow-lg">${icon}</div>
+            <p class="text-xs font-medium text-gray-900 mt-2 text-center">${hop.label}</p>
+            <p class="text-xs font-mono text-gray-500">${hop.node}</p>
+            <p class="text-xs font-bold ${latencyColor}">${hop.latency_ms}ms</p>
+        `;
+        pathEl.appendChild(nodeDiv);
+
+        // Arrow between nodes
+        if (i < data.hops.length - 1) {
+            const arrow = document.createElement('div');
+            arrow.className = 'flex items-center px-1 opacity-0';
+            arrow.style.animation = `fadeInUp 0.3s ease ${i * 0.15 + 0.1}s forwards`;
+            arrow.innerHTML = `
+                <div class="relative">
+                    <div class="w-12 h-0.5 bg-blue-300"></div>
+                    <div class="packet-dot absolute top-1/2 left-0 w-2 h-2 bg-blue-500 rounded-full -translate-y-1/2" style="animation: packetMove 1.5s ease-in-out ${i * 0.3}s infinite"></div>
+                    <svg class="w-4 h-4 text-blue-400 absolute -right-2 top-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </div>
+            `;
+            pathEl.appendChild(arrow);
+        }
+    });
+
+    // Hop table
+    const tableEl = document.getElementById('hop-table');
+    tableEl.innerHTML = '';
+    data.hops.forEach(hop => {
+        const typeColor = hop.type === 'endpoint' ? 'bg-blue-100 text-blue-800'
+                        : hop.type === 'gateway' ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-gray-100 text-gray-600';
+        const latencyColor = hop.latency_ms > 100 ? 'text-red-600 font-bold'
+                           : hop.latency_ms > 30 ? 'text-yellow-600' : 'text-green-600';
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50';
+        tr.innerHTML = `
+            <td class="px-6 py-3 text-sm font-mono text-gray-900">${hop.hop}</td>
+            <td class="px-6 py-3"><code class="text-sm bg-gray-50 px-1.5 py-0.5 rounded">${hop.node}</code></td>
+            <td class="px-6 py-3 text-sm font-medium text-gray-900">${hop.label}</td>
+            <td class="px-6 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${typeColor}">${hop.type}</span></td>
+            <td class="px-6 py-3 text-sm ${latencyColor}">${hop.latency_ms} ms</td>
+            <td class="px-6 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${hop.status}</span></td>
+            <td class="px-6 py-3 text-xs text-gray-500">${hop.detail}</td>
+        `;
+        tableEl.appendChild(tr);
+    });
+
+    // Packet lifecycle
+    const lifecycleEl = document.getElementById('packet-lifecycle');
+    lifecycleEl.innerHTML = '';
+    const steps = [
+        { time: '0.000s', event: `[SRC] Application creates ${data.protocol} packet`, color: 'text-blue-400' },
+        { time: '0.001s', event: `[SRC] Packet encapsulated: ${data.protocol} → IP → Ethernet`, color: 'text-blue-300' },
+        { time: '0.002s', event: `[SRC] ARP resolution for gateway`, color: 'text-gray-400' },
+        { time: '0.003s', event: `[SRC] Frame sent to gateway (Hop 1)`, color: 'text-green-400' },
+    ];
+    data.hops.forEach((hop, i) => {
+        if (i > 0 && i < data.hops.length - 1) {
+            steps.push({
+                time: `${(hop.latency_ms / 1000).toFixed(3)}s`,
+                event: `[HOP ${hop.hop}] ${hop.node} → TTL decremented, packet forwarded`,
+                color: 'text-yellow-400',
+            });
+        }
+    });
+    if (data.protocol === 'TCP') {
+        steps.push({ time: `${(data.total_latency_ms / 1000).toFixed(3)}s`, event: `[DST] ${data.destination}:${data.port} → SYN received`, color: 'text-cyan-400' });
+        if (data.port_open) {
+            steps.push({ time: `${(data.total_latency_ms / 1000 + 0.001).toFixed(3)}s`, event: `[DST] SYN-ACK sent back to ${data.source}`, color: 'text-green-400' });
+            steps.push({ time: `${(data.total_latency_ms * 2 / 1000).toFixed(3)}s`, event: `[SRC] ACK sent → TCP handshake COMPLETE`, color: 'text-green-300' });
+        } else {
+            steps.push({ time: `${(data.total_latency_ms / 1000 + 0.001).toFixed(3)}s`, event: `[DST] RST sent → Port ${data.port} CLOSED/FILTERED`, color: 'text-red-400' });
+        }
+    } else if (data.protocol === 'ICMP') {
+        steps.push({ time: `${(data.total_latency_ms / 1000).toFixed(3)}s`, event: `[DST] ICMP Echo Reply sent`, color: 'text-green-400' });
+    } else {
+        steps.push({ time: `${(data.total_latency_ms / 1000).toFixed(3)}s`, event: `[DST] UDP datagram received at port ${data.port}`, color: 'text-cyan-400' });
+    }
+
+    steps.forEach((step, i) => {
+        const div = document.createElement('div');
+        div.className = `${step.color} opacity-0`;
+        div.style.animation = `fadeInUp 0.3s ease ${i * 0.08}s forwards`;
+        div.innerHTML = `<span class="text-gray-500">[${step.time}]</span> ${step.event}`;
+        lifecycleEl.appendChild(div);
+    });
+
+    // Scroll to results
+    document.getElementById('trace-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes packetMove {
+    0% { left: 0; }
+    50% { left: calc(100% - 8px); }
+    100% { left: 0; }
+}
+</style>
+{% endblock %}
