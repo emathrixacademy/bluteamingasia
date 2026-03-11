@@ -18,6 +18,8 @@
                     <a href="{{ url_for('incidents.list_incidents') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('incidents') %}text-white bg-brand-800{% endif %}">Incidents</a>
                     <a href="{{ url_for('alerts.list_alerts') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('alerts') %}text-white bg-brand-800{% endif %}">Alerts</a>
                     <a href="{{ url_for('virtual_lab.lab_list') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('virtual_lab') %}text-white bg-brand-800{% endif %}">Virtual Lab</a>
+                    <a href="{{ url_for('honeypot.dashboard') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('honeypot') %}text-white bg-brand-800{% endif %}">Honeypot</a>
+                    <a href="{{ url_for('analysis.dashboard') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('analysis') %}text-white bg-brand-800{% endif %}">Analysis</a>
                 </div>
                 {% endif %}
             </div>
@@ -44,6 +46,8 @@
             <a href="{{ url_for('incidents.list_incidents') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Incidents</a>
             <a href="{{ url_for('alerts.list_alerts') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Alerts</a>
             <a href="{{ url_for('virtual_lab.lab_list') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Virtual Lab</a>
+            <a href="{{ url_for('honeypot.dashboard') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Honeypot</a>
+            <a href="{{ url_for('analysis.dashboard') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Analysis</a>
         </div>
     </div>
     {% endif %}

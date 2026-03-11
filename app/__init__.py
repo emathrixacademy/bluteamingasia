@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from config import config
 from app.extensions import db, migrate, login_manager, csrf
 
@@ -29,6 +29,8 @@ def create_app(config_name='development'):
     from app.blueprints.alerts import alerts_bp
     from app.blueprints.api import api_bp
     from app.blueprints.virtual_lab import virtual_lab_bp
+    from app.blueprints.honeypot import honeypot_bp
+    from app.blueprints.analysis import analysis_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -39,9 +41,23 @@ def create_app(config_name='development'):
     app.register_blueprint(alerts_bp, url_prefix='/alerts')
     app.register_blueprint(api_bp, url_prefix='/api/v1')
     app.register_blueprint(virtual_lab_bp, url_prefix='/lab')
+    app.register_blueprint(honeypot_bp, url_prefix='/honeypot')
+    app.register_blueprint(analysis_bp, url_prefix='/analysis')
 
     # Exempt API blueprint from CSRF
     csrf.exempt(api_bp)
+
+    # Static asset caching for faster deployment/loading
+    app.config.setdefault('SEND_FILE_MAX_AGE_DEFAULT', 31536000)  # 1 year cache
+
+    @app.after_request
+    def add_cache_headers(response):
+        if 'Cache-Control' not in response.headers:
+            if request.path.startswith('/static/'):
+                response.headers['Cache-Control'] = 'public, max-age=31536000'
+            else:
+                response.headers['Cache-Control'] = 'no-cache'
+        return response
 
     # Error handlers
     @app.errorhandler(404)

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Event Correlations{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Event Correlations</h1>
+        <a href="{{ url_for('analysis.dashboard') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition">Back to Analysis</a>
+    </div>
+
+    {% if chains %}
+    <div class="space-y-6">
+        {% for chain in chains %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <h3 class="text-base font-semibold text-gray-900">{{ chain.pattern_name }}</h3>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                        {% if chain.severity == 'critical' %}bg-red-100 text-red-800
+                        {% elif chain.severity == 'high' %}bg-orange-100 text-orange-800
+                        {% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ chain.severity }}
+                    </span>
+                </div>
+                <span class="text-xs text-gray-500">MITRE {{ chain.mitre_technique }} | {{ chain.mitre_tactic }}</span>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-gray-600 mb-3">{{ chain.description }}</p>
+                <p class="text-sm text-gray-500 mb-4">
+                    <span class="font-medium text-gray-700">Source:</span> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">{{ chain.source }}</code>
+                    <span class="mx-2">|</span>
+                    <span class="font-medium text-gray-700">Window:</span> {{ chain.first_seen }} &mdash; {{ chain.last_seen }}
+                </p>
+
+                <h4 class="text-sm font-semibold text-gray-800 mb-2">Correlated Events ({{ chain.event_count }})</h4>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Severity</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Device</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for evt in chain.events %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-2 text-xs text-gray-500 whitespace-nowrap">{{ evt.timestamp }}</td>
+                                <td class="px-4 py-2"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">{{ evt.type }}</code></td>
+                                <td class="px-4 py-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                                        {% if evt.severity in ('critical','high') %}bg-red-100 text-red-800
+                                        {% elif evt.severity == 'medium' %}bg-yellow-100 text-yellow-800
+                                        {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                        {{ evt.severity }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-2 text-sm text-gray-600">{{ evt.device }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-16">
+        <p class="text-xl font-medium text-gray-400">No correlations found</p>
+        <p class="text-sm text-gray-500 mt-2">No attack patterns detected in the last {{ hours }} hours.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

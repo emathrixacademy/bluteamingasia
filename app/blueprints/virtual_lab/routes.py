@@ -10,54 +10,74 @@ LAB_ENVIRONMENTS = [
         'id': 'network-monitor',
         'name': 'Network Monitoring Station',
         'description': 'Real-time network traffic analysis and monitoring. '
-                       'View live connections, interfaces, ARP tables, and run diagnostics on your actual network.',
-        'tools': ['netstat', 'ipconfig', 'arp', 'ping', 'tracert', 'nslookup', 'portscan', 'hostscan'],
+                       'View live connections, interfaces, ARP tables, and capture network traffic.',
+        'tools': ['netstat', 'ipconfig', 'arp', 'ping', 'tracert', 'nslookup', 'capture', 'flood-detect'],
         'icon': 'network',
         'difficulty': 'beginner',
     },
     {
         'id': 'vuln-scanner',
         'name': 'Vulnerability Scanner Lab',
-        'description': 'Scan target hosts for open ports and services. '
-                       'Identify exposed services, DNS records, and HTTP headers on real targets.',
-        'tools': ['portscan', 'hostscan', 'nslookup', 'headers', 'resolve', 'dnslookup'],
+        'description': 'Scan targets for open ports, service versions, and vulnerabilities. '
+                       'Full nmap-style scanning with banner grabbing and SSL analysis.',
+        'tools': ['portscan', 'hostscan', 'detect', 'banner', 'vulnscan', 'sslscan', 'headers'],
         'icon': 'scanner',
         'difficulty': 'intermediate',
     },
     {
         'id': 'packet-analysis',
         'name': 'Packet Analysis Workshop',
-        'description': 'Deep network analysis with real connection data. '
-                       'Inspect active connections, routing tables, and network neighbors.',
-        'tools': ['netstat', 'arp', 'route', 'connections', 'pathping'],
+        'description': 'Deep network analysis with real connection data and packet capture. '
+                       'Monitor traffic flows, detect anomalies, and inspect connection states.',
+        'tools': ['netstat', 'arp', 'route', 'connections', 'capture', 'pathping', 'flood-detect'],
         'icon': 'packets',
         'difficulty': 'intermediate',
     },
     {
         'id': 'incident-response',
         'name': 'Incident Response Lab',
-        'description': 'Investigate network state for incident response. '
-                       'Check connections, DNS, routing, and host discovery for threat hunting.',
-        'tools': ['netstat', 'nslookup', 'arp', 'hostscan', 'portscan', 'whois'],
+        'description': 'Investigate network state for incident response and threat hunting. '
+                       'Check IOCs, analyze connections, and detect attack patterns.',
+        'tools': ['netstat', 'nslookup', 'arp', 'hostscan', 'portscan', 'ioc', 'capture', 'flood-detect'],
         'icon': 'forensics',
         'difficulty': 'advanced',
     },
     {
         'id': 'firewall-ids',
-        'name': 'Firewall & Network Config',
-        'description': 'Inspect firewall state, routing tables, and network configuration. '
-                       'Analyze network topology and connection states.',
-        'tools': ['netstat', 'route', 'ipconfig', 'arp', 'nbtstat'],
+        'name': 'Firewall & IDS Lab',
+        'description': 'Inspect firewall state, detect floods and DDoS, and analyze '
+                       'network topology. Includes intrusion detection capabilities.',
+        'tools': ['netstat', 'route', 'ipconfig', 'arp', 'flood-detect', 'capture', 'vulnscan'],
         'icon': 'firewall',
         'difficulty': 'advanced',
     },
     {
         'id': 'recon',
         'name': 'Reconnaissance & OSINT',
-        'description': 'Gather intelligence on targets using DNS, HTTP headers, WHOIS, and port scanning. '
-                       'Map external attack surfaces.',
-        'tools': ['nslookup', 'dnslookup', 'headers', 'whois', 'resolve', 'portscan', 'tracert'],
+        'description': 'Gather intelligence on targets using DNS, HTTP headers, WHOIS, SSL analysis, '
+                       'banner grabbing, and service fingerprinting. Map attack surfaces.',
+        'tools': ['nslookup', 'dnslookup', 'headers', 'whois', 'resolve', 'portscan', 'tracert',
+                  'banner', 'sslscan', 'detect', 'ioc'],
         'icon': 'malware',
+        'difficulty': 'expert',
+    },
+    {
+        'id': 'ssl-crypto',
+        'name': 'SSL/TLS & Cryptography Lab',
+        'description': 'Analyze SSL/TLS configurations, certificate chains, cipher suites, '
+                       'and protocol security. Find weak encryption and expired certificates.',
+        'tools': ['sslscan', 'headers', 'banner', 'vulnscan', 'resolve'],
+        'icon': 'scanner',
+        'difficulty': 'intermediate',
+    },
+    {
+        'id': 'threat-hunt',
+        'name': 'Threat Hunting Lab',
+        'description': 'Advanced threat hunting with IOC checking, service detection, '
+                       'vulnerability scanning, and network anomaly detection.',
+        'tools': ['ioc', 'detect', 'vulnscan', 'banner', 'sslscan', 'flood-detect',
+                  'capture', 'portscan', 'hostscan', 'whois'],
+        'icon': 'forensics',
         'difficulty': 'expert',
     },
 ]

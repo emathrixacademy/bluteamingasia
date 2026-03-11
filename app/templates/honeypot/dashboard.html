@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Honeypot Management{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Honeypot Management</h1>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-brand-900 rounded-xl shadow-sm p-6">
+            <div class="text-center">
+                <p class="text-3xl font-bold text-white">{{ stats.total_services }}</p>
+                <p class="text-sm text-gray-300 mt-1">Total Honeypots</p>
+            </div>
+        </div>
+        <div class="bg-green-600 rounded-xl shadow-sm p-6">
+            <div class="text-center">
+                <p class="text-3xl font-bold text-white">{{ stats.active_services }}</p>
+                <p class="text-sm text-green-100 mt-1">Active</p>
+            </div>
+        </div>
+        <div class="bg-yellow-500 rounded-xl shadow-sm p-6">
+            <div class="text-center">
+                <p class="text-3xl font-bold text-white">{{ stats.total_connections }}</p>
+                <p class="text-sm text-yellow-100 mt-1">Total Connections</p>
+            </div>
+        </div>
+        <div class="bg-red-600 rounded-xl shadow-sm p-6">
+            <div class="text-center">
+                <p class="text-3xl font-bold text-white">{{ stats.critical_events }}</p>
+                <p class="text-sm text-red-100 mt-1">Critical Events</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Panel -->
+        <div class="space-y-6">
+            <!-- Deploy New Honeypot -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Deploy Honeypot</h3>
+                </div>
+                <div class="p-6">
+                    <form method="POST" action="{{ url_for('honeypot.deploy') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
+                            <select name="service_type" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" required>
+                                {% for key, tmpl in templates.items() %}
+                                <option value="{{ key }}">{{ tmpl.name }} (port {{ tmpl.port }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">Deploy</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Top Attacker IPs -->
+            {% if stats.top_attacker_ips %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Top Attacker IPs</h3>
+                </div>
+                <ul class="divide-y divide-gray-100">
+                    {% for item in stats.top_attacker_ips %}
+                    <li class="px-6 py-3 flex justify-between items-center">
+                        <code class="text-sm text-gray-700">{{ item.ip }}</code>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">{{ item.count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Top Credentials -->
+            {% if stats.top_usernames %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Top Attempted Usernames</h3>
+                </div>
+                <ul class="divide-y divide-gray-100">
+                    {% for username, count in stats.top_usernames %}
+                    <li class="px-6 py-3 flex justify-between items-center">
+                        <code class="text-sm text-gray-700">{{ username }}</code>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Active Honeypots (right 2/3) -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Deployed Honeypots</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Port</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Connections</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for service in services %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ service.name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500 font-mono">{{ service.service_type }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">{{ service.port }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">{{ service.interaction_level }}</td>
+                                <td class="px-6 py-4">
+                                    {% if service.is_active %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Active</span>
+                                    {% else %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600">{{ service.total_connections }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex gap-1">
+                                        <a href="{{ url_for('honeypot.logs', service_id=service.id) }}"
+                                           class="text-blue-600 hover:text-blue-800 text-xs font-medium border border-blue-300 px-2 py-1 rounded">Logs</a>
+                                        <form method="POST" action="{{ url_for('honeypot.simulate', service_id=service.id) }}" class="inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button class="text-yellow-600 hover:text-yellow-800 text-xs font-medium border border-yellow-300 px-2 py-1 rounded">Simulate</button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('honeypot.toggle', service_id=service.id) }}" class="inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button class="text-xs font-medium border px-2 py-1 rounded
+                                                {% if service.is_active %}text-gray-600 hover:text-gray-800 border-gray-300{% else %}text-green-600 hover:text-green-800 border-green-300{% endif %}">
+                                                {{ 'Disable' if service.is_active else 'Enable' }}
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('honeypot.remove', service_id=service.id) }}" class="inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button class="text-red-600 hover:text-red-800 text-xs font-medium border border-red-300 px-2 py-1 rounded" onclick="return confirm('Delete this honeypot?')">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="px-6 py-8 text-center text-gray-500">No honeypots deployed. Deploy one from the left panel.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

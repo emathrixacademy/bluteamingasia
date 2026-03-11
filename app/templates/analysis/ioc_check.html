@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}IOC Check{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Indicator of Compromise Check</h1>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="flex gap-3">
+                <input type="text" name="indicator" class="flex-1 border border-gray-300 rounded-md px-4 py-3 text-sm focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Enter IP address, domain, or file hash..."
+                       value="{{ indicator }}">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-sm font-medium transition" type="submit">Check IOC</button>
+            </div>
+        </form>
+    </div>
+
+    {% if result %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <span class="text-sm font-medium text-gray-700">Results for:</span>
+            <code class="ml-2 bg-gray-100 px-2 py-0.5 rounded text-gray-800">{{ result.indicator }}</code>
+        </div>
+        <div class="p-6">
+            {% if result.match %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-red-800 mb-4">THREAT DETECTED</h3>
+                <div class="space-y-2">
+                    <div class="flex">
+                        <span class="w-24 text-sm font-medium text-red-700">Indicator:</span>
+                        <code class="text-sm text-red-800">{{ result.indicator }}</code>
+                    </div>
+                    <div class="flex">
+                        <span class="w-24 text-sm font-medium text-red-700">Type:</span>
+                        <span class="text-sm text-red-800 uppercase">{{ result.type }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-24 text-sm font-medium text-red-700">Threat:</span>
+                        <span class="text-sm text-red-800">{{ result.threat }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-24 text-sm font-medium text-red-700">Severity:</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-200 text-red-900">{{ result.severity }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-24 text-sm font-medium text-red-700">Source:</span>
+                        <span class="text-sm text-red-800">{{ result.source }}</span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-green-800 mb-2">No threats found</h3>
+                <p class="text-sm text-green-700"><code class="bg-green-100 px-1.5 py-0.5 rounded">{{ result.indicator }}</code> ({{ result.type }}) is not in any known threat intelligence feeds.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Known Threat Intelligence Database</h3>
+        </div>
+        <div class="p-6">
+            <p class="text-sm text-gray-600 mb-2">The IOC checker queries against built-in threat intelligence feeds including known C2 servers, botnet controllers, scanner IPs, and exploit kit hosts.</p>
+            <p class="text-sm text-gray-600">Supported indicator types: IP addresses, domains, file hashes (MD5/SHA256).</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
