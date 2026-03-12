@@ -31,6 +31,7 @@ def create_app(config_name='development'):
     from app.blueprints.virtual_lab import virtual_lab_bp
     from app.blueprints.honeypot import honeypot_bp
     from app.blueprints.analysis import analysis_bp
+    from app.blueprints.missions import missions_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -43,6 +44,7 @@ def create_app(config_name='development'):
     app.register_blueprint(virtual_lab_bp, url_prefix='/lab')
     app.register_blueprint(honeypot_bp, url_prefix='/honeypot')
     app.register_blueprint(analysis_bp, url_prefix='/analysis')
+    app.register_blueprint(missions_bp, url_prefix='/missions')
 
     # Exempt API blueprint from CSRF
     csrf.exempt(api_bp)

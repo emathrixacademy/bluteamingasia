@@ -27,6 +27,10 @@ with app.app_context():
 
     db.create_all()
 
+    # Seed missions if none exist
+    from app.blueprints.missions.routes import seed_missions
+    seed_missions()
+
     # Seed default admin user if no users exist
     from app.models.user import User
     if User.query.count() == 0:

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}{{ mission.title }}{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Back -->
+    <a href="{{ url_for('missions.mission_list') }}" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        All Missions
+    </a>
+
+    <!-- Mission Header -->
+    <div class="bg-brand-900 rounded-2xl shadow-lg p-8 mb-8 text-white">
+        <div class="flex items-start justify-between">
+            <div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium mb-3
+                    {% if mission.difficulty == 'beginner' %}bg-green-500 bg-opacity-20 text-green-300
+                    {% elif mission.difficulty == 'intermediate' %}bg-yellow-500 bg-opacity-20 text-yellow-300
+                    {% elif mission.difficulty == 'advanced' %}bg-orange-500 bg-opacity-20 text-orange-300
+                    {% else %}bg-red-500 bg-opacity-20 text-red-300{% endif %}">{{ mission.difficulty | title }}</span>
+                <h1 class="text-3xl font-bold">{{ mission.title }}</h1>
+                <p class="mt-2 text-gray-300 max-w-2xl">{{ mission.description }}</p>
+            </div>
+            <div class="text-right flex-shrink-0 ml-6">
+                <p class="text-3xl font-bold text-blue-400">{{ done }}/{{ total }}</p>
+                <p class="text-xs text-gray-400 mt-1">Challenges</p>
+                {% if progress.status == 'completed' %}
+                <span class="inline-flex items-center mt-2 px-3 py-1 rounded-full text-xs font-medium bg-green-500 bg-opacity-20 text-green-300">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                    Mission Complete
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Progress bar -->
+        <div class="mt-6 h-2 bg-white bg-opacity-10 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-500 rounded-full transition-all duration-500"
+                 style="width: {{ (done / total * 100) if total > 0 else 0 }}%"></div>
+        </div>
+    </div>
+
+    <!-- Briefing -->
+    {% if mission.briefing %}
+    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-8">
+        <div class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div>
+                <h3 class="font-semibold text-yellow-800 mb-1">Mission Briefing</h3>
+                <p class="text-sm text-yellow-700">{{ mission.briefing }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Challenge List -->
+    <div class="space-y-3">
+        {% for item in challenge_data %}
+        {% set ch = item.challenge %}
+        {% if item.unlocked %}
+        <a href="{{ url_for('missions.play_challenge', mission_id=mission.id, challenge_id=ch.id) }}"
+           class="block bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition overflow-hidden">
+            <div class="flex items-center p-5">
+                <!-- Status icon -->
+                <div class="flex-shrink-0 mr-4">
+                    {% if item.completed %}
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                    </div>
+                    {% else %}
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <span class="text-sm font-bold text-blue-600">{{ loop.index }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-base font-semibold text-gray-900">{{ ch.title }}</h3>
+                    <p class="text-sm text-gray-500 mt-0.5">
+                        {% if ch.task_type == 'flag_submission' %}Flag Submission
+                        {% elif ch.task_type == 'multiple_choice' %}Multiple Choice
+                        {% elif ch.task_type == 'command_output' %}Command Challenge
+                        {% else %}Text Answer{% endif %}
+                        &middot; {{ ch.points }} pts
+                    </p>
+                </div>
+                <!-- Arrow -->
+                <div class="flex-shrink-0 ml-4">
+                    {% if item.completed %}
+                    <span class="text-xs font-medium text-green-600 bg-green-50 px-2.5 py-1 rounded-full">Done</span>
+                    {% else %}
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% else %}
+        <!-- Locked challenge -->
+        <div class="bg-gray-50 rounded-xl border border-gray-200 opacity-60">
+            <div class="flex items-center p-5">
+                <div class="flex-shrink-0 mr-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-gray-500">{{ ch.title }}</h3>
+                    <p class="text-sm text-gray-400">Complete the previous challenge to unlock</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

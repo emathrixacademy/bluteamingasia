@@ -14,4 +14,6 @@ if __name__ == '__main__':
         except Exception:
             db.session.rollback()
         db.create_all()
+        from app.blueprints.missions.routes import seed_missions
+        seed_missions()
     app.run(debug=True, port=8080)

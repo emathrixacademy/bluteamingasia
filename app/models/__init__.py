@@ -6,3 +6,4 @@ from app.models.alert import Alert  # noqa: F401
 from app.models.ai_action import AIAction  # noqa: F401
 from app.models.knowledge import KnowledgeDocument  # noqa: F401
 from app.models.honeypot import HoneypotService, HoneypotLog  # noqa: F401
+from app.models.mission import Mission, Challenge, UserMissionProgress, UserChallengeCompletion  # noqa: F401

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Missions{% endblock %}
+{% block body_class %}bg-gray-100{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Cybersecurity Missions</h1>
+            <p class="mt-1 text-gray-500">Complete challenges, earn points, and level up your blue team skills</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-5 py-3 text-center">
+                <p class="text-xs text-gray-500 uppercase tracking-wider">Your Points</p>
+                <p class="text-2xl font-bold text-blue-600">{{ my_points }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Missions Grid -->
+        <div class="lg:col-span-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {% for item in mission_data %}
+                {% set m = item.mission %}
+                <a href="{{ url_for('missions.mission_detail', mission_id=m.id) }}"
+                   class="block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md hover:border-blue-300 transition group">
+                    <!-- Progress bar at top -->
+                    <div class="h-1.5 bg-gray-100">
+                        <div class="h-full rounded-r transition-all duration-500
+                            {% if item.percent == 100 %}bg-green-500{% elif item.percent > 0 %}bg-blue-500{% else %}bg-gray-200{% endif %}"
+                             style="width: {{ item.percent }}%"></div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-11 h-11 rounded-lg flex items-center justify-center
+                                {% if m.icon == 'network' %}bg-blue-100 text-blue-600
+                                {% elif m.icon == 'forensics' %}bg-yellow-100 text-yellow-600
+                                {% elif m.icon == 'malware' %}bg-purple-100 text-purple-600
+                                {% elif m.icon == 'firewall' %}bg-red-100 text-red-600
+                                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                {% if m.icon == 'network' %}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
+                                {% elif m.icon == 'forensics' %}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                {% elif m.icon == 'malware' %}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                                {% elif m.icon == 'firewall' %}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                {% else %}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                {% endif %}
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-medium px-2 py-0.5 rounded
+                                    {% if m.difficulty == 'beginner' %}bg-green-100 text-green-700
+                                    {% elif m.difficulty == 'intermediate' %}bg-yellow-100 text-yellow-700
+                                    {% elif m.difficulty == 'advanced' %}bg-orange-100 text-orange-700
+                                    {% else %}bg-red-100 text-red-700{% endif %}">{{ m.difficulty | title }}</span>
+                                {% if item.percent == 100 %}
+                                <span class="text-xs font-medium px-2 py-0.5 rounded bg-green-100 text-green-700">Completed</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition">{{ m.title }}</h3>
+                        <p class="mt-1 text-sm text-gray-500 line-clamp-2">{{ m.description }}</p>
+                        <div class="mt-4 flex items-center justify-between text-xs text-gray-500">
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                                    {{ item.completed_challenges }}/{{ item.total_challenges }} tasks
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                                    {{ m.points_total }} pts
+                                </span>
+                            </div>
+                            <span class="text-blue-600 font-medium group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                                {% if item.percent == 0 %}Start{% elif item.percent == 100 %}Review{% else %}Continue{% endif %}
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sidebar: Leaderboard -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-4">
+                <div class="px-5 py-4 border-b border-gray-200 bg-brand-900">
+                    <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Leaderboard</h2>
+                </div>
+                <div class="divide-y divide-gray-100">
+                    {% for entry in leaderboard %}
+                    <div class="px-5 py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+                                {% if loop.index == 1 %}bg-yellow-100 text-yellow-700
+                                {% elif loop.index == 2 %}bg-gray-100 text-gray-600
+                                {% elif loop.index == 3 %}bg-orange-100 text-orange-600
+                                {% else %}bg-gray-50 text-gray-500{% endif %}">{{ loop.index }}</span>
+                            <span class="text-sm font-medium text-gray-900">{{ entry.name }}</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-bold text-blue-600">{{ entry.points }} pts</p>
+                            <p class="text-xs text-gray-400">{{ entry.missions }} missions</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="px-5 py-8 text-center text-sm text-gray-400">
+                        No completions yet.<br>Be the first!
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

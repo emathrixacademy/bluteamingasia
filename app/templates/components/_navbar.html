@@ -20,6 +20,7 @@
                     <a href="{{ url_for('virtual_lab.lab_list') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('virtual_lab') %}text-white bg-brand-800{% endif %}">Virtual Lab</a>
                     <a href="{{ url_for('honeypot.dashboard') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('honeypot') %}text-white bg-brand-800{% endif %}">Honeypot</a>
                     <a href="{{ url_for('analysis.dashboard') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('analysis') %}text-white bg-brand-800{% endif %}">Analysis</a>
+                    <a href="{{ url_for('missions.mission_list') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium {% if request.endpoint and request.endpoint.startswith('missions') %}text-white bg-brand-800{% endif %}">Missions</a>
                 </div>
                 {% endif %}
             </div>
@@ -48,6 +49,7 @@
             <a href="{{ url_for('virtual_lab.lab_list') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Virtual Lab</a>
             <a href="{{ url_for('honeypot.dashboard') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Honeypot</a>
             <a href="{{ url_for('analysis.dashboard') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Analysis</a>
+            <a href="{{ url_for('missions.mission_list') }}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Missions</a>
         </div>
     </div>
     {% endif %}
